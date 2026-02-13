@@ -17,13 +17,7 @@ pub const ID_HEADER: &str = "country,id_name,code,gender,dob,valid";
 
 /// Format a single IBAN as a CSV row.
 pub fn iban_row(iban_code: &str, formatted: &str, valid: bool) -> String {
-    format!(
-        "{},{},{},{}",
-        &iban_code[..2],
-        iban_code,
-        formatted,
-        valid
-    )
+    format!("{},{},{},{}", &iban_code[..2], iban_code, formatted, valid)
 }
 
 /// Format a single personal ID result as a CSV row.

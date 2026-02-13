@@ -53,12 +53,10 @@ fn csv_writer(path: &str) -> Box<dyn Write> {
     if path == "-" {
         Box::new(std::io::stdout())
     } else {
-        Box::new(
-            std::fs::File::create(path).unwrap_or_else(|e| {
-                eprintln!("Cannot create {}: {}", path, e);
-                std::process::exit(1);
-            }),
-        )
+        Box::new(std::fs::File::create(path).unwrap_or_else(|e| {
+            eprintln!("Cannot create {}: {}", path, e);
+            std::process::exit(1);
+        }))
     }
 }
 
@@ -94,7 +92,11 @@ fn main() {
                             writeln!(
                                 w,
                                 "{}",
-                                csv_fmt::iban_row(&iban_code, &iban::format_iban(&iban_code), valid)
+                                csv_fmt::iban_row(
+                                    &iban_code,
+                                    &iban::format_iban(&iban_code),
+                                    valid
+                                )
                             )
                             .unwrap();
                         } else {
