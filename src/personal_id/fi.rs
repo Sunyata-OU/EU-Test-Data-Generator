@@ -58,7 +58,8 @@ pub fn parse(code: &str) -> IdResult {
         _ => 1900,
     };
     let serial: u16 = code[7..10].parse().unwrap_or(0);
-    IdResult { country_code: "".to_string(),
+    IdResult {
+        country_code: "".to_string(),
         code: code.to_string(),
         gender: Some(if serial % 2 == 1 { "male" } else { "female" }.to_string()),
         dob: Some(format!("{}-{:02}-{:02}", century + yy, mm, dd)),

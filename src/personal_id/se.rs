@@ -46,7 +46,8 @@ pub fn parse(code: &str) -> IdResult {
     } else {
         1900
     };
-    IdResult { country_code: "".to_string(),
+    IdResult {
+        country_code: "".to_string(),
         code: code.to_string(),
         gender: Some(
             if clean.as_bytes()[8] % 2 == 1 {

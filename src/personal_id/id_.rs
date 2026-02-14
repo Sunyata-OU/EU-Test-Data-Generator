@@ -5,10 +5,8 @@ use super::IdResult;
 
 // Province codes (first 2 digits)
 static PROVINCE_CODES: &[u8] = &[
-    11, 12, 13, 14, 15, 16, 17, 18, 19, 21,
-    31, 32, 33, 34, 35, 36, 51, 52, 53, 61,
-    62, 63, 64, 65, 71, 72, 73, 74, 75, 76,
-    81, 82, 91, 92, 94,
+    11, 12, 13, 14, 15, 16, 17, 18, 19, 21, 31, 32, 33, 34, 35, 36, 51, 52, 53, 61, 62, 63, 64, 65,
+    71, 72, 73, 74, 75, 76, 81, 82, 91, 92, 94,
 ];
 
 pub fn generate(opts: &super::GenOptions, rng: &mut impl Rng) -> String {
@@ -28,7 +26,13 @@ pub fn generate(opts: &super::GenOptions, rng: &mut impl Rng) -> String {
 
     format!(
         "{:02}{:02}{:02}{:02}{:02}{:02}{:04}",
-        prov, city, district, dd, month, year % 100, seq
+        prov,
+        city,
+        district,
+        dd,
+        month,
+        year % 100,
+        seq
     )
 }
 
@@ -53,7 +57,8 @@ pub fn parse(code: &str) -> IdResult {
         (None, None)
     };
 
-    IdResult { country_code: "".to_string(),
+    IdResult {
+        country_code: "".to_string(),
         code: code.to_string(),
         gender,
         dob,

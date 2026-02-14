@@ -4,21 +4,19 @@ use super::date::Gender;
 use super::IdResult;
 
 static STATES: &[&str] = &[
-    "AS", "BC", "BS", "CC", "CL", "CM", "CS", "CH", "DF", "DG", "GT", "GR", "HG", "JC", "MC",
-    "MN", "MS", "NT", "NL", "OC", "PL", "QT", "QR", "SP", "SL", "SR", "TC", "TS", "TL", "VZ",
-    "YN", "ZS", "NE",
+    "AS", "BC", "BS", "CC", "CL", "CM", "CS", "CH", "DF", "DG", "GT", "GR", "HG", "JC", "MC", "MN",
+    "MS", "NT", "NL", "OC", "PL", "QT", "QR", "SP", "SL", "SR", "TC", "TS", "TL", "VZ", "YN", "ZS",
+    "NE",
 ];
 
 static BAD_WORDS: &[&str] = &[
-    "BACA", "BAKA", "BUEI", "BUEY", "CACA", "CACO", "CAGA", "CAGO", "CAKA", "CAKO",
-    "COGE", "COGI", "COJA", "COJE", "COJI", "COJO", "COLA", "CULO", "FALO", "FETO",
-    "GETA", "GUEI", "GUEY", "JETA", "JOTO", "KACA", "KACO", "KAGA", "KAGO", "KAKA",
-    "KAKO", "KOGE", "KOGI", "KOJA", "KOJE", "KOJI", "KOJO", "KOLA", "KULO", "LILO",
-    "LOCA", "LOCO", "LOKA", "LOKO", "MAME", "MAMO", "MEAR", "MEAS", "MEON", "MIAR",
-    "MION", "MOCO", "MOKO", "MULA", "MULO", "NACA", "NACO", "PEDA", "PEDO", "PENE",
-    "PIPI", "PITO", "POPO", "PUTA", "PUTO", "QULO", "RATA", "ROBA", "ROBE", "ROBO",
-    "RUIN", "SENO", "TETA", "VACA", "VAGA", "VAGO", "VAKA", "VUEI", "VUEY", "WUEI",
-    "WUEY",
+    "BACA", "BAKA", "BUEI", "BUEY", "CACA", "CACO", "CAGA", "CAGO", "CAKA", "CAKO", "COGE", "COGI",
+    "COJA", "COJE", "COJI", "COJO", "COLA", "CULO", "FALO", "FETO", "GETA", "GUEI", "GUEY", "JETA",
+    "JOTO", "KACA", "KACO", "KAGA", "KAGO", "KAKA", "KAKO", "KOGE", "KOGI", "KOJA", "KOJE", "KOJI",
+    "KOJO", "KOLA", "KULO", "LILO", "LOCA", "LOCO", "LOKA", "LOKO", "MAME", "MAMO", "MEAR", "MEAS",
+    "MEON", "MIAR", "MION", "MOCO", "MOKO", "MULA", "MULO", "NACA", "NACO", "PEDA", "PEDO", "PENE",
+    "PIPI", "PITO", "POPO", "PUTA", "PUTO", "QULO", "RATA", "ROBA", "ROBE", "ROBO", "RUIN", "SENO",
+    "TETA", "VACA", "VAGA", "VAGO", "VAKA", "VUEI", "VUEY", "WUEI", "WUEY",
 ];
 
 static VOWELS: &[u8] = b"AEIOU";
@@ -26,11 +24,11 @@ static CONSONANTS: &[u8] = b"BCDFGHJKLMNPQRSTVWXYZ";
 
 fn char_value(c: u8) -> u32 {
     // Alphabet: 0-9 A-N & O-Z (& at index 24 represents Ñ)
-    if c >= b'0' && c <= b'9' {
+    if c.is_ascii_digit() {
         (c - b'0') as u32
-    } else if c >= b'A' && c <= b'N' {
+    } else if (b'A'..=b'N').contains(&c) {
         (c - b'A') as u32 + 10
-    } else if c >= b'O' && c <= b'Z' {
+    } else if (b'O'..=b'Z').contains(&c) {
         (c - b'A') as u32 + 11
     } else {
         0
@@ -147,7 +145,8 @@ pub fn parse(code: &str) -> IdResult {
         (None, None)
     };
 
-    IdResult { country_code: "".to_string(),
+    IdResult {
+        country_code: "".to_string(),
         code: code.to_string(),
         gender,
         dob,

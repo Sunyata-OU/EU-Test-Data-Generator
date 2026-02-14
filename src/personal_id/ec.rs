@@ -9,7 +9,11 @@ fn compute_check(digits: &[u8]) -> u8 {
         .map(|(i, &d)| {
             if i % 2 == 0 {
                 let v = d as u32 * 2;
-                if v > 9 { v - 9 } else { v }
+                if v > 9 {
+                    v - 9
+                } else {
+                    v
+                }
             } else {
                 d as u32
             }
@@ -40,7 +44,7 @@ pub fn validate(code: &str) -> bool {
     }
     let digits: Vec<u8> = clean.bytes().map(|b| b - b'0').collect();
     let province = digits[0] * 10 + digits[1];
-    if province < 1 || province > 24 {
+    if !(1..=24).contains(&province) {
         return false;
     }
     if digits[2] > 5 {
@@ -51,7 +55,8 @@ pub fn validate(code: &str) -> bool {
 
 pub fn parse(code: &str) -> IdResult {
     let clean: String = code.chars().filter(|c| c.is_ascii_digit()).collect();
-    IdResult { country_code: "".to_string(),
+    IdResult {
+        country_code: "".to_string(),
         code: clean,
         gender: None,
         dob: None,

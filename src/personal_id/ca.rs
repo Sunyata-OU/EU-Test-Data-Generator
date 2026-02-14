@@ -8,7 +8,9 @@ pub fn generate(_opts: &super::GenOptions, rng: &mut impl Rng) -> String {
     // First digit: 1-7 or 9 (0 and 8 are not assigned)
     let first = loop {
         let d = rng.gen_range(1..=9u8);
-        if d != 8 { break d; }
+        if d != 8 {
+            break d;
+        }
     };
     digits.push(first);
     for _ in 0..7 {
@@ -33,7 +35,8 @@ pub fn validate(code: &str) -> bool {
 
 pub fn parse(code: &str) -> IdResult {
     let clean: String = code.chars().filter(|c| *c != ' ').collect();
-    IdResult { country_code: "".to_string(),
+    IdResult {
+        country_code: "".to_string(),
         code: if clean.len() == 9 {
             format!("{} {} {}", &clean[0..3], &clean[3..6], &clean[6..9])
         } else {

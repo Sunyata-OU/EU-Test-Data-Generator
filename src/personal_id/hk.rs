@@ -43,13 +43,14 @@ pub fn validate(code: &str) -> bool {
     }
     let bytes = clean.as_bytes();
     // Find where digits start
-    let prefix_len = if bytes.len() == 9 && bytes[0].is_ascii_uppercase() && bytes[1].is_ascii_uppercase() {
-        2
-    } else if bytes[0].is_ascii_uppercase() {
-        1
-    } else {
-        return false;
-    };
+    let prefix_len =
+        if bytes.len() == 9 && bytes[0].is_ascii_uppercase() && bytes[1].is_ascii_uppercase() {
+            2
+        } else if bytes[0].is_ascii_uppercase() {
+            1
+        } else {
+            return false;
+        };
     let digit_part = &bytes[prefix_len..prefix_len + 6];
     if !digit_part.iter().all(|b| b.is_ascii_digit()) {
         return false;
@@ -64,7 +65,8 @@ pub fn validate(code: &str) -> bool {
 }
 
 pub fn parse(code: &str) -> IdResult {
-    IdResult { country_code: "".to_string(),
+    IdResult {
+        country_code: "".to_string(),
         code: code.to_uppercase(),
         gender: None,
         dob: None,

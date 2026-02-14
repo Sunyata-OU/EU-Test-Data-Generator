@@ -16,7 +16,7 @@ pub fn generate(_opts: &super::GenOptions, rng: &mut impl Rng) -> String {
                 .zip(WEIGHTS.iter())
                 .map(|(&d, &w)| d as u32 * w)
                 .sum();
-            if s % 11 == 0 {
+            if s.is_multiple_of(11) {
                 return all.iter().map(|d| (b'0' + d) as char).collect();
             }
         }
@@ -34,12 +34,13 @@ pub fn validate(code: &str) -> bool {
         .zip(WEIGHTS.iter())
         .map(|(&d, &w)| d as u32 * w)
         .sum();
-    s % 11 == 0
+    s.is_multiple_of(11)
 }
 
 pub fn parse(code: &str) -> IdResult {
     let clean: String = code.chars().filter(|c| c.is_ascii_digit()).collect();
-    IdResult { country_code: "".to_string(),
+    IdResult {
+        country_code: "".to_string(),
         code: if clean.len() == 9 {
             format!("{} {} {}", &clean[0..3], &clean[3..6], &clean[6..9])
         } else {

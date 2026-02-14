@@ -1,7 +1,7 @@
+use crate::bank_account::checksum::luhn_check_digit;
 use rand::Rng;
 #[cfg(feature = "json")]
 use serde::Serialize;
-use crate::bank_account::checksum::luhn_check_digit;
 
 #[derive(Debug, Clone)]
 #[cfg_attr(feature = "json", derive(Serialize))]
@@ -48,7 +48,7 @@ impl Registry {
                     let p = rng.gen_range(2221..=2720);
                     (p.to_string().bytes().map(|b| b - b'0').collect(), 16)
                 }
-            },
+            }
             "amex" => (vec![3, if rng.gen_bool(0.5) { 4 } else { 7 }], 15),
             "discover" => {
                 let r = rng.gen_range(0..3);
@@ -57,18 +57,18 @@ impl Registry {
                     1 => (vec![6, 5], 16),
                     _ => (vec![6, 4, rng.gen_range(4..=9)], 16),
                 }
-            },
+            }
             "jcb" => {
                 let p = rng.gen_range(3528..=3589);
                 (p.to_string().bytes().map(|b| b - b'0').collect(), 16)
-            },
+            }
             "diners" => {
                 if rng.gen_bool(0.5) {
                     (vec![3, 0, rng.gen_range(0..=5)], 14)
                 } else {
                     (vec![3, if rng.gen_bool(0.5) { 6 } else { 8 }], 14)
                 }
-            },
+            }
             _ => return None,
         };
 
@@ -109,13 +109,12 @@ impl Registry {
             "diners" if number.len() == 14 => {
                 format!("{} {} {}", &number[0..4], &number[4..10], &number[10..14])
             }
-            _ => {
-                number.as_bytes()
-                    .chunks(4)
-                    .map(|chunk| std::str::from_utf8(chunk).unwrap())
-                    .collect::<Vec<_>>()
-                    .join(" ")
-            }
+            _ => number
+                .as_bytes()
+                .chunks(4)
+                .map(|chunk| std::str::from_utf8(chunk).unwrap())
+                .collect::<Vec<_>>()
+                .join(" "),
         }
     }
 

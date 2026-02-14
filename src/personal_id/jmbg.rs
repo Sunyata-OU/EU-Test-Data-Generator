@@ -74,7 +74,8 @@ pub fn parse(code: &str) -> IdResult {
     let yyy: u16 = clean[4..7].parse().unwrap_or(0);
     let year: u16 = if yyy >= 900 { 1000 + yyy } else { 2000 + yyy };
     let seq: u16 = clean[9..12].parse().unwrap_or(0);
-    IdResult { country_code: "".to_string(),
+    IdResult {
+        country_code: "".to_string(),
         code: clean,
         gender: Some(if seq < 500 { "male" } else { "female" }.to_string()),
         dob: Some(format!("{}-{:02}-{:02}", year, mm, dd)),

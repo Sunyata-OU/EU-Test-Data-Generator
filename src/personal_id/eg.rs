@@ -6,8 +6,8 @@ use super::IdResult;
 
 // Governorate codes
 static GOVS: &[u8] = &[
-    1, 2, 3, 4, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-    21, 22, 23, 24, 25, 26, 27, 28, 29, 31, 32, 33, 34, 35, 88,
+    1, 2, 3, 4, 11, 12, 13, 14, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31, 32, 33,
+    34, 35, 88,
 ];
 
 pub fn generate(opts: &super::GenOptions, rng: &mut impl Rng) -> String {
@@ -20,8 +20,8 @@ pub fn generate(opts: &super::GenOptions, rng: &mut impl Rng) -> String {
     // Sequence: odd = male, even = female, 3 digits + gender digit
     let seq_base = rng.gen_range(0..=499u16);
     let seq = match gender {
-        Gender::Male => seq_base * 2 + 1,   // odd
-        Gender::Female => seq_base * 2,      // even
+        Gender::Male => seq_base * 2 + 1, // odd
+        Gender::Female => seq_base * 2,   // even
     };
 
     let base = format!(
@@ -67,7 +67,8 @@ pub fn parse(code: &str) -> IdResult {
         (None, None)
     };
 
-    IdResult { country_code: "".to_string(),
+    IdResult {
+        country_code: "".to_string(),
         code: code.to_string(),
         gender,
         dob,

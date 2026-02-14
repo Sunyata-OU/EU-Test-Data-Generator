@@ -55,7 +55,8 @@ pub fn validate(code: &str) -> bool {
 }
 
 pub fn parse(code: &str) -> IdResult {
-    IdResult { country_code: "".to_string(),
+    IdResult {
+        country_code: "".to_string(),
         code: code.to_string(),
         gender: None,
         dob: None,

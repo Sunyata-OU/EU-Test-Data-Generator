@@ -26,10 +26,7 @@ pub fn generate(_opts: &super::GenOptions, rng: &mut impl Rng) -> String {
 }
 
 pub fn validate(code: &str) -> bool {
-    let clean: String = code
-        .chars()
-        .filter(|c| c.is_ascii_alphanumeric())
-        .collect();
+    let clean: String = code.chars().filter(|c| c.is_ascii_alphanumeric()).collect();
     if clean.len() < 8 || clean.len() > 9 {
         return false;
     }
@@ -46,7 +43,8 @@ pub fn validate(code: &str) -> bool {
 }
 
 pub fn parse(code: &str) -> IdResult {
-    IdResult { country_code: "".to_string(),
+    IdResult {
+        country_code: "".to_string(),
         code: code.to_string(),
         gender: None,
         dob: None,

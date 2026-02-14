@@ -9,7 +9,11 @@ fn cpf_check1(digits: &[u8]) -> u8 {
         .map(|(i, &d)| d as u32 * (10 - i as u32))
         .sum();
     let r = s % 11;
-    if r < 2 { 0 } else { (11 - r) as u8 }
+    if r < 2 {
+        0
+    } else {
+        (11 - r) as u8
+    }
 }
 
 fn cpf_check2(digits: &[u8]) -> u8 {
@@ -19,7 +23,11 @@ fn cpf_check2(digits: &[u8]) -> u8 {
         .map(|(i, &d)| d as u32 * (11 - i as u32))
         .sum();
     let r = s % 11;
-    if r < 2 { 0 } else { (11 - r) as u8 }
+    if r < 2 {
+        0
+    } else {
+        (11 - r) as u8
+    }
 }
 
 pub fn generate(_opts: &super::GenOptions, rng: &mut impl Rng) -> String {
@@ -49,7 +57,8 @@ pub fn validate(code: &str) -> bool {
 
 pub fn parse(code: &str) -> IdResult {
     let clean: String = code.chars().filter(|c| c.is_ascii_digit()).collect();
-    IdResult { country_code: "".to_string(),
+    IdResult {
+        country_code: "".to_string(),
         code: if clean.len() == 11 {
             format!(
                 "{}.{}.{}-{}",

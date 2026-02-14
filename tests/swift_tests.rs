@@ -1,5 +1,5 @@
+use idsmith::swift::{GenOptions, Registry};
 use rand::thread_rng;
-use idsmith::swift::{Registry, GenOptions};
 
 #[test]
 fn test_swift_generation() {
@@ -9,7 +9,11 @@ fn test_swift_generation() {
 
     for _ in 0..100 {
         let result = registry.generate(&opts, &mut rng);
-        assert!(registry.validate(&result.code), "Failed to validate generated code: {}", result.code);
+        assert!(
+            registry.validate(&result.code),
+            "Failed to validate generated code: {}",
+            result.code
+        );
         assert!(result.valid);
     }
 }
@@ -18,15 +22,20 @@ fn test_swift_generation() {
 fn test_specific_countries() {
     let registry = Registry::new();
     let mut rng = thread_rng();
-    
+
     let countries = vec!["US", "GB", "DE", "FR"];
-    
+
     for country in countries {
         let opts = GenOptions {
             country: Some(country.to_string()),
         };
         let result = registry.generate(&opts, &mut rng);
         assert_eq!(result.country, country);
-        assert!(registry.validate(&result.code), "Failed to validate {}: {}", country, result.code);
+        assert!(
+            registry.validate(&result.code),
+            "Failed to validate {}: {}",
+            country,
+            result.code
+        );
     }
 }

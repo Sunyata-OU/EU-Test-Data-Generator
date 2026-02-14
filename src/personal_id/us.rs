@@ -22,12 +22,13 @@ pub fn validate(code: &str) -> bool {
     let area: u16 = clean[0..3].parse().unwrap_or(0);
     let group: u8 = clean[3..5].parse().unwrap_or(0);
     let serial: u16 = clean[5..9].parse().unwrap_or(0);
-    area >= 1 && area <= 899 && area != 666 && group >= 1 && serial >= 1
+    (1..=899).contains(&area) && area != 666 && group >= 1 && serial >= 1
 }
 
 pub fn parse(code: &str) -> IdResult {
     let clean: String = code.chars().filter(|c| *c != '-').collect();
-    IdResult { country_code: "".to_string(),
+    IdResult {
+        country_code: "".to_string(),
         code: if clean.len() == 9 {
             format!("{}-{}-{}", &clean[0..3], &clean[3..5], &clean[5..9])
         } else {

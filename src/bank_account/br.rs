@@ -21,7 +21,7 @@ pub fn generate(_opts: &GenOptions, rng: &mut impl Rng) -> AccountResult {
     // Account number: 6-10 digits + check digit
     let acct_len = rng.gen_range(6..=10u8);
     let acct_digits: Vec<u8> = (0..acct_len).map(|_| rng.gen_range(0..=9)).collect();
-    let acct_weights: Vec<u8> = (2..=(acct_len as u8 + 1)).rev().collect();
+    let acct_weights: Vec<u8> = (2..=(acct_len + 1)).rev().collect();
     let acct_rem = weighted_mod11(&acct_digits, &acct_weights);
     let acct_check: char = match acct_rem {
         0 | 1 => '0',

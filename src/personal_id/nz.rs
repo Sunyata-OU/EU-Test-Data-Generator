@@ -12,7 +12,11 @@ fn try_check(digits: &[u8]) -> Option<u8> {
         .sum();
     let r = s % 11;
     let check = if r == 0 { 0 } else { 11 - r };
-    if check <= 9 { Some(check as u8) } else { None }
+    if check <= 9 {
+        Some(check as u8)
+    } else {
+        None
+    }
 }
 
 pub fn generate(_opts: &super::GenOptions, rng: &mut impl Rng) -> String {
@@ -53,7 +57,8 @@ pub fn validate(code: &str) -> bool {
 
 pub fn parse(code: &str) -> IdResult {
     let clean: String = code.chars().filter(|c| c.is_ascii_digit()).collect();
-    IdResult { country_code: "".to_string(),
+    IdResult {
+        country_code: "".to_string(),
         code: clean,
         gender: None,
         dob: None,

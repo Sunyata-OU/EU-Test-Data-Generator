@@ -68,35 +68,123 @@ struct TerritoryAlias {
 /// Territories that use a parent country's banking system.
 static TERRITORY_ALIASES: &[TerritoryAlias] = &[
     // US territories
-    TerritoryAlias { code: "AS", country_name: "American Samoa", parent_code: "US" },
-    TerritoryAlias { code: "GU", country_name: "Guam", parent_code: "US" },
-    TerritoryAlias { code: "MP", country_name: "Northern Mariana Islands", parent_code: "US" },
-    TerritoryAlias { code: "PR", country_name: "Puerto Rico", parent_code: "US" },
-    TerritoryAlias { code: "UM", country_name: "US Minor Outlying Islands", parent_code: "US" },
-    TerritoryAlias { code: "VI", country_name: "US Virgin Islands", parent_code: "US" },
+    TerritoryAlias {
+        code: "AS",
+        country_name: "American Samoa",
+        parent_code: "US",
+    },
+    TerritoryAlias {
+        code: "GU",
+        country_name: "Guam",
+        parent_code: "US",
+    },
+    TerritoryAlias {
+        code: "MP",
+        country_name: "Northern Mariana Islands",
+        parent_code: "US",
+    },
+    TerritoryAlias {
+        code: "PR",
+        country_name: "Puerto Rico",
+        parent_code: "US",
+    },
+    TerritoryAlias {
+        code: "UM",
+        country_name: "US Minor Outlying Islands",
+        parent_code: "US",
+    },
+    TerritoryAlias {
+        code: "VI",
+        country_name: "US Virgin Islands",
+        parent_code: "US",
+    },
     // Australian territories
-    TerritoryAlias { code: "CC", country_name: "Cocos (Keeling) Islands", parent_code: "AU" },
-    TerritoryAlias { code: "CX", country_name: "Christmas Island", parent_code: "AU" },
-    TerritoryAlias { code: "HM", country_name: "Heard Island and McDonald Islands", parent_code: "AU" },
-    TerritoryAlias { code: "NF", country_name: "Norfolk Island", parent_code: "AU" },
+    TerritoryAlias {
+        code: "CC",
+        country_name: "Cocos (Keeling) Islands",
+        parent_code: "AU",
+    },
+    TerritoryAlias {
+        code: "CX",
+        country_name: "Christmas Island",
+        parent_code: "AU",
+    },
+    TerritoryAlias {
+        code: "HM",
+        country_name: "Heard Island and McDonald Islands",
+        parent_code: "AU",
+    },
+    TerritoryAlias {
+        code: "NF",
+        country_name: "Norfolk Island",
+        parent_code: "AU",
+    },
     // NZ territories
-    TerritoryAlias { code: "CK", country_name: "Cook Islands", parent_code: "NZ" },
-    TerritoryAlias { code: "NU", country_name: "Niue", parent_code: "NZ" },
-    TerritoryAlias { code: "PN", country_name: "Pitcairn Islands", parent_code: "NZ" },
-    TerritoryAlias { code: "TK", country_name: "Tokelau", parent_code: "NZ" },
+    TerritoryAlias {
+        code: "CK",
+        country_name: "Cook Islands",
+        parent_code: "NZ",
+    },
+    TerritoryAlias {
+        code: "NU",
+        country_name: "Niue",
+        parent_code: "NZ",
+    },
+    TerritoryAlias {
+        code: "PN",
+        country_name: "Pitcairn Islands",
+        parent_code: "NZ",
+    },
+    TerritoryAlias {
+        code: "TK",
+        country_name: "Tokelau",
+        parent_code: "NZ",
+    },
     // French territory
-    TerritoryAlias { code: "BL", country_name: "Saint Barthélemy", parent_code: "FR" },
+    TerritoryAlias {
+        code: "BL",
+        country_name: "Saint Barthélemy",
+        parent_code: "FR",
+    },
     // UK territories
-    TerritoryAlias { code: "GS", country_name: "South Georgia and the South Sandwich Islands", parent_code: "GB" },
-    TerritoryAlias { code: "IO", country_name: "British Indian Ocean Territory", parent_code: "GB" },
-    TerritoryAlias { code: "SH", country_name: "Saint Helena, Ascension and Tristan da Cunha", parent_code: "GB" },
+    TerritoryAlias {
+        code: "GS",
+        country_name: "South Georgia and the South Sandwich Islands",
+        parent_code: "GB",
+    },
+    TerritoryAlias {
+        code: "IO",
+        country_name: "British Indian Ocean Territory",
+        parent_code: "GB",
+    },
+    TerritoryAlias {
+        code: "SH",
+        country_name: "Saint Helena, Ascension and Tristan da Cunha",
+        parent_code: "GB",
+    },
     // Norwegian territories
-    TerritoryAlias { code: "BV", country_name: "Bouvet Island", parent_code: "NO" },
-    TerritoryAlias { code: "SJ", country_name: "Svalbard and Jan Mayen", parent_code: "NO" },
+    TerritoryAlias {
+        code: "BV",
+        country_name: "Bouvet Island",
+        parent_code: "NO",
+    },
+    TerritoryAlias {
+        code: "SJ",
+        country_name: "Svalbard and Jan Mayen",
+        parent_code: "NO",
+    },
     // Morocco
-    TerritoryAlias { code: "EH", country_name: "Western Sahara", parent_code: "MA" },
+    TerritoryAlias {
+        code: "EH",
+        country_name: "Western Sahara",
+        parent_code: "MA",
+    },
     // Antarctica — no single banking system; mapped to generic
-    TerritoryAlias { code: "AQ", country_name: "Antarctica", parent_code: "AQ" },
+    TerritoryAlias {
+        code: "AQ",
+        country_name: "Antarctica",
+        parent_code: "AQ",
+    },
 ];
 
 fn resolve_alias(code: &str) -> Option<&'static TerritoryAlias> {
@@ -275,7 +363,12 @@ impl Registry {
             || resolve_alias(country).is_some()
     }
 
-    fn generate_for(&self, code: &str, opts: &GenOptions, rng: &mut rand::rngs::ThreadRng) -> Option<AccountResult> {
+    fn generate_for(
+        &self,
+        code: &str,
+        opts: &GenOptions,
+        rng: &mut rand::rngs::ThreadRng,
+    ) -> Option<AccountResult> {
         if let Some(entry) = self.find(code) {
             let mut result = (entry.generate)(opts, rng);
             if entry.has_iban {
@@ -380,13 +473,14 @@ impl Registry {
         for alias in TERRITORY_ALIASES {
             if seen.insert(alias.code) {
                 // Find the parent's format info
-                let (format_name, has_iban) = if let Some(e) = self.entries.iter().find(|e| e.code == alias.parent_code) {
-                    (e.format_name, e.has_iban)
-                } else if iban_based::is_supported(alias.parent_code) {
-                    ("IBAN Account", true)
-                } else {
-                    ("Bank + Account", false)
-                };
+                let (format_name, has_iban) =
+                    if let Some(e) = self.entries.iter().find(|e| e.code == alias.parent_code) {
+                        (e.format_name, e.has_iban)
+                    } else if iban_based::is_supported(alias.parent_code) {
+                        ("IBAN Account", true)
+                    } else {
+                        ("Bank + Account", false)
+                    };
                 result.push((alias.code, alias.country_name, format_name, has_iban));
             }
         }

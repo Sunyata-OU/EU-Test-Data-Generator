@@ -5,13 +5,10 @@ use super::IdResult;
 
 // Place of birth codes (selected common ones)
 static PB_CODES: &[u8] = &[
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
-    21, 22, 23, 24, 25, 26, 27, 28, 29,
-    30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
-    40, 41, 42, 43, 44, 45, 46, 47, 48, 49,
-    50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
-    60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72,
-    74, 75, 76, 77, 78, 79, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 98, 99,
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
+    31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54,
+    55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 74, 75, 76, 77, 78, 79,
+    82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 98, 99,
 ];
 
 pub fn generate(opts: &super::GenOptions, rng: &mut impl Rng) -> String {
@@ -20,14 +17,19 @@ pub fn generate(opts: &super::GenOptions, rng: &mut impl Rng) -> String {
     let pb = PB_CODES[rng.gen_range(0..PB_CODES.len())];
     let seq = rng.gen_range(0..=999u16);
     let last = match gender {
-        Gender::Male => seq * 2 + 1,   // odd
-        Gender::Female => seq * 2,     // even
+        Gender::Male => seq * 2 + 1, // odd
+        Gender::Female => seq * 2,   // even
     };
     let last_digit = (last % 10) as u8;
     let seq_part = last / 10;
     format!(
         "{:02}{:02}{:02}{:02}{:03}{}",
-        year % 100, month, day, pb, seq_part, last_digit
+        year % 100,
+        month,
+        day,
+        pb,
+        seq_part,
+        last_digit
     )
 }
 
@@ -58,7 +60,8 @@ pub fn parse(code: &str) -> IdResult {
         (None, None)
     };
 
-    IdResult { country_code: "".to_string(),
+    IdResult {
+        country_code: "".to_string(),
         code: if clean.len() == 12 {
             format!("{}-{}-{}", &clean[0..6], &clean[6..8], &clean[8..12])
         } else {

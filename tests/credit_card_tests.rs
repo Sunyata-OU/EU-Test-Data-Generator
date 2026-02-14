@@ -1,5 +1,5 @@
+use idsmith::credit_card::{GenOptions, Registry};
 use rand::thread_rng;
-use idsmith::credit_card::{Registry, GenOptions};
 
 #[test]
 fn test_credit_card_generation() {
@@ -9,7 +9,11 @@ fn test_credit_card_generation() {
 
     for _ in 0..100 {
         let result = registry.generate(&opts, &mut rng).unwrap();
-        assert!(registry.validate(&result.number), "Failed to validate generated number: {}", result.number);
+        assert!(
+            registry.validate(&result.number),
+            "Failed to validate generated number: {}",
+            result.number
+        );
         assert!(result.valid);
     }
 }
@@ -18,16 +22,21 @@ fn test_credit_card_generation() {
 fn test_specific_brands() {
     let registry = Registry::new();
     let mut rng = thread_rng();
-    
+
     let brands = vec!["visa", "mastercard", "amex", "discover", "jcb", "diners"];
-    
+
     for brand in brands {
         let opts = GenOptions {
             brand: Some(brand.to_string()),
         };
         let result = registry.generate(&opts, &mut rng).expect(brand);
         assert_eq!(result.brand.to_lowercase(), brand);
-        assert!(registry.validate(&result.number), "Failed to validate {}: {}", brand, result.number);
+        assert!(
+            registry.validate(&result.number),
+            "Failed to validate {}: {}",
+            brand,
+            result.number
+        );
     }
 }
 

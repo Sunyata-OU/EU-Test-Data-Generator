@@ -6,12 +6,10 @@ use idsmith::personal_id::{self, GenOptions};
 // All countries with specific implementations (56 total)
 const ALL_SPECIFIC_COUNTRIES: &[&str] = &[
     // Europe (31)
-    "AT", "BA", "BE", "BG", "CH", "CZ", "DE", "DK", "EE", "ES", "FI", "FR", "GB", "GR", "HR",
-    "IE", "IS", "IT", "LT", "LV", "ME", "NL", "NO", "PL", "PT", "RO", "RS", "SE", "SI", "SK",
-    "TR",
+    "AT", "BA", "BE", "BG", "CH", "CZ", "DE", "DK", "EE", "ES", "FI", "FR", "GB", "GR", "HR", "IE",
+    "IS", "IT", "LT", "LV", "ME", "NL", "NO", "PL", "PT", "RO", "RS", "SE", "SI", "SK", "TR",
     // Americas (10)
-    "US", "CA", "BR", "AR", "CL", "CO", "UY", "EC", "PE", "MX",
-    // Asia-Pacific (12)
+    "US", "CA", "BR", "AR", "CL", "CO", "UY", "EC", "PE", "MX", // Asia-Pacific (12)
     "CN", "IN", "JP", "KR", "TW", "TH", "SG", "MY", "ID", "HK", "AU", "NZ",
     // Africa/Middle East (3)
     "ZA", "IL", "EG",
@@ -141,8 +139,7 @@ fn test_year_filter() {
 
     // Countries that encode birth year in their ID
     let year_countries = &[
-        "EE", "FI", "SE", "NO", "PL", "RO", "BG", "DK",
-        // New countries with DOB
+        "EE", "FI", "SE", "NO", "PL", "RO", "BG", "DK", // New countries with DOB
         "CN", "KR", "ZA", "EG", "MX", "MY", "ID",
     ];
 
@@ -218,7 +215,11 @@ fn test_checksum_corruption() {
             // Find a digit to corrupt
             if let Some(pos) = chars.iter().position(|c| c.is_ascii_digit()) {
                 let old = chars[pos];
-                chars[pos] = if old == '9' { '0' } else { (old as u8 + 1) as char };
+                chars[pos] = if old == '9' {
+                    '0'
+                } else {
+                    (old as u8 + 1) as char
+                };
                 let corrupted: String = chars.into_iter().collect();
                 let valid = registry.validate(cc, &corrupted).unwrap_or(true);
                 // Most corrupted codes should fail, but not guaranteed for all checksums

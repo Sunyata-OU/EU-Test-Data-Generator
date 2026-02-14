@@ -55,7 +55,8 @@ pub fn parse(code: &str) -> IdResult {
     } else {
         (1900 + yy, mm)
     };
-    IdResult { country_code: "".to_string(),
+    IdResult {
+        country_code: "".to_string(),
         code: code.to_string(),
         gender: Some(
             if seq.is_multiple_of(2) {

@@ -440,9 +440,7 @@ pub fn generate(code: &str, rng: &mut impl Rng) -> Option<AccountResult> {
 }
 
 pub fn validate(code: &str, raw: &str) -> Option<bool> {
-    if find_info(code).is_none() {
-        return None;
-    }
+    find_info(code)?;
     let fields = crate::iban::get_format(code)?;
     let expected_len: u8 = fields.iter().map(|f| f.length).sum();
     if raw.len() != expected_len as usize {
@@ -456,9 +454,9 @@ pub fn validate(code: &str, raw: &str) -> Option<bool> {
         let ok = match field.char_type {
             crate::iban::CharType::Numeric => segment.chars().all(|c| c.is_ascii_digit()),
             crate::iban::CharType::Alpha => segment.chars().all(|c| c.is_ascii_uppercase()),
-            crate::iban::CharType::Alphanumeric => {
-                segment.chars().all(|c| c.is_ascii_digit() || c.is_ascii_uppercase())
-            }
+            crate::iban::CharType::Alphanumeric => segment
+                .chars()
+                .all(|c| c.is_ascii_digit() || c.is_ascii_uppercase()),
         };
         if !ok {
             return Some(false);
@@ -469,9 +467,7 @@ pub fn validate(code: &str, raw: &str) -> Option<bool> {
 }
 
 pub fn format(code: &str, raw: &str) -> Option<String> {
-    if find_info(code).is_none() {
-        return None;
-    }
+    find_info(code)?;
     Some(raw.to_string())
 }
 

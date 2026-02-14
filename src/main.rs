@@ -7,7 +7,9 @@ use idsmith::{bank_account, company_id, credit_card, csv as csv_fmt, iban, perso
 
 #[derive(Parser)]
 #[command(name = "idsmith")]
-#[command(about = "Validate and generate checksum-correct IBANs, personal IDs, bank accounts, and more for 252 countries")]
+#[command(
+    about = "Validate and generate checksum-correct IBANs, personal IDs, bank accounts, and more for 252 countries"
+)]
 struct Cli {
     #[command(subcommand)]
     command: Commands,
@@ -186,7 +188,7 @@ fn main() {
                     Ok(iban_code) => {
                         let valid = iban::validate_iban(&iban_code);
                         let formatted = iban::format_iban(&iban_code);
-                        
+
                         #[cfg(feature = "json")]
                         if json.is_some() {
                             json_results.push(iban::IbanResult {
@@ -198,20 +200,14 @@ fn main() {
                         }
 
                         if let Some(ref mut w) = out_csv {
-                            writeln!(
-                                w,
-                                "{}",
-                                csv_fmt::iban_row(
-                                    &iban_code,
-                                    &formatted,
-                                    valid
-                                )
-                            )
-                            .unwrap();
+                            writeln!(w, "{}", csv_fmt::iban_row(&iban_code, &formatted, valid))
+                                .unwrap();
                         } else {
                             let mut print_it = true;
                             #[cfg(feature = "json")]
-                            if json.is_some() { print_it = false; }
+                            if json.is_some() {
+                                print_it = false;
+                            }
 
                             if print_it {
                                 println!(
@@ -254,10 +250,7 @@ fn main() {
             let registry = bank_account::Registry::new();
 
             if list {
-                println!(
-                    "{:<6} {:<25} {:<30} {}",
-                    "Code", "Country", "Format", "IBAN"
-                );
+                println!("{:<6} {:<25} {:<30} IBAN", "Code", "Country", "Format");
                 println!("{}", "-".repeat(70));
                 for (code, country_name, format_name, has_iban) in registry.list_countries() {
                     println!(
@@ -309,7 +302,9 @@ fn main() {
                 } else {
                     let mut print_it = true;
                     #[cfg(feature = "json")]
-                    if json.is_some() { print_it = false; }
+                    if json.is_some() {
+                        print_it = false;
+                    }
 
                     if print_it {
                         println!(
@@ -368,7 +363,7 @@ fn main() {
             let registry = personal_id::Registry::new();
 
             if list {
-                println!("{:<6} {:<25} {}", "Code", "Country", "ID Name");
+                println!("{:<6} {:<25} ID Name", "Code", "Country");
                 println!("{}", "-".repeat(55));
                 for (code, country_name, name) in registry.list_countries() {
                     println!("{:<6} {:<25} {}", code, country_name, name);
@@ -402,7 +397,9 @@ fn main() {
             } else {
                 let mut print_it = true;
                 #[cfg(feature = "json")]
-                if json.is_some() { print_it = false; }
+                if json.is_some() {
+                    print_it = false;
+                }
                 if print_it {
                     println!("{} - {}:", country, name);
                 }
@@ -414,7 +411,7 @@ fn main() {
             for _ in 0..count {
                 let code = registry.generate(&country, &opts, &mut rng).unwrap();
                 let parsed = registry.parse(&country, &code).unwrap();
-                
+
                 #[cfg(feature = "json")]
                 if json.is_some() {
                     json_results.push(parsed.clone());
@@ -425,7 +422,9 @@ fn main() {
                 } else {
                     let mut print_it = true;
                     #[cfg(feature = "json")]
-                    if json.is_some() { print_it = false; }
+                    if json.is_some() {
+                        print_it = false;
+                    }
 
                     if print_it {
                         let mut parts = Vec::new();
@@ -507,7 +506,9 @@ fn main() {
                 } else {
                     let mut print_it = true;
                     #[cfg(feature = "json")]
-                    if json.is_some() { print_it = false; }
+                    if json.is_some() {
+                        print_it = false;
+                    }
 
                     if print_it {
                         println!(
@@ -554,7 +555,7 @@ fn main() {
 
             for _ in 0..count {
                 let result = registry.generate(&opts, &mut rng);
-                
+
                 #[cfg(feature = "json")]
                 if json.is_some() {
                     json_results.push(result.clone());
@@ -565,7 +566,9 @@ fn main() {
                 } else {
                     let mut print_it = true;
                     #[cfg(feature = "json")]
-                    if json.is_some() { print_it = false; }
+                    if json.is_some() {
+                        print_it = false;
+                    }
 
                     if print_it {
                         println!(
@@ -601,7 +604,7 @@ fn main() {
             let registry = company_id::Registry::new();
 
             if list {
-                println!("{:<6} {:<25} {}", "Code", "Country", "ID Name");
+                println!("{:<6} {:<25} ID Name", "Code", "Country");
                 println!("{}", "-".repeat(50));
                 for (code, country_name, name) in registry.list_countries() {
                     println!("{:<6} {:<25} {}", code, country_name, name);
@@ -640,12 +643,18 @@ fn main() {
                 } else {
                     let mut print_it = true;
                     #[cfg(feature = "json")]
-                    if json.is_some() { print_it = false; }
+                    if json.is_some() {
+                        print_it = false;
+                    }
 
                     if print_it {
                         println!(
                             "{} - {} - {}: {}  (valid: {})",
-                            result.country_code, result.country_name, result.name, result.code, result.valid
+                            result.country_code,
+                            result.country_name,
+                            result.name,
+                            result.code,
+                            result.valid
                         );
                     }
                 }
@@ -666,10 +675,14 @@ fn main() {
                 }
             }
         }
-        Commands::Validate { category, code, country } => {
+        Commands::Validate {
+            category,
+            code,
+            country,
+        } => {
             let cat = category.to_lowercase();
             let country = country.map(|c| c.to_uppercase());
-            
+
             let valid = match cat.as_str() {
                 "iban" => iban::validate_iban(&code),
                 "account" => {
@@ -677,15 +690,19 @@ fn main() {
                         eprintln!("Error: --country is required for account validation");
                         std::process::exit(1);
                     });
-                    bank_account::Registry::new().validate(&cc, &code).unwrap_or(false)
-                },
+                    bank_account::Registry::new()
+                        .validate(&cc, &code)
+                        .unwrap_or(false)
+                }
                 "id" => {
                     let cc = country.unwrap_or_else(|| {
                         eprintln!("Error: --country is required for personal ID validation");
                         std::process::exit(1);
                     });
-                    personal_id::Registry::new().validate(&cc, &code).unwrap_or(false)
-                },
+                    personal_id::Registry::new()
+                        .validate(&cc, &code)
+                        .unwrap_or(false)
+                }
                 "card" => credit_card::Registry::new().validate(&code),
                 "swift" => swift::Registry::new().validate(&code),
                 "company" => {
@@ -694,9 +711,12 @@ fn main() {
                         std::process::exit(1);
                     });
                     company_id::Registry::new().validate(&cc, &code)
-                },
+                }
                 _ => {
-                    eprintln!("Unknown category: {}. Use iban, account, id, card, swift, or company.", cat);
+                    eprintln!(
+                        "Unknown category: {}. Use iban, account, id, card, swift, or company.",
+                        cat
+                    );
                     std::process::exit(1);
                 }
             };

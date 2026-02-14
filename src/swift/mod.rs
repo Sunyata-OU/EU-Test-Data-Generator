@@ -32,10 +32,17 @@ impl Registry {
     }
 
     pub fn generate(&self, opts: &GenOptions, rng: &mut impl Rng) -> SwiftResult {
-        let country = opts.country.as_deref().unwrap_or_else(|| {
-            let countries = ["US", "GB", "DE", "FR", "IN", "CN", "JP", "AU", "CA", "CH", "IT", "ES", "NL", "SG", "HK"];
-            countries[rng.gen_range(0..countries.len())]
-        }).to_uppercase();
+        let country = opts
+            .country
+            .as_deref()
+            .unwrap_or_else(|| {
+                let countries = [
+                    "US", "GB", "DE", "FR", "IN", "CN", "JP", "AU", "CA", "CH", "IT", "ES", "NL",
+                    "SG", "HK",
+                ];
+                countries[rng.gen_range(0..countries.len())]
+            })
+            .to_uppercase();
 
         let bank = match country.as_str() {
             "US" => ["CHAS", "CITI", "BOFA", "JPMC", "WFCU"].choose(rng),
@@ -43,11 +50,12 @@ impl Registry {
             "DE" => ["DEUT", "COBA", "DABA", "DRE2", "DZAD"].choose(rng),
             "FR" => ["BNPA", "SOGE", "CRLY", "BCIT", "BCEP"].choose(rng),
             _ => None,
-        }.map(|s| s.to_string()).unwrap_or_else(|| {
-            (0..4).map(|_| rng.gen_range(b'A'..=b'Z') as char).collect()
-        });
+        }
+        .map(|s| s.to_string())
+        .unwrap_or_else(|| (0..4).map(|_| rng.gen_range(b'A'..=b'Z') as char).collect());
 
-        let location = format!("{}{}", 
+        let location = format!(
+            "{}{}",
             rng.gen_range(b'A'..=b'Z') as char,
             rng.gen_range(b'2'..=b'9') as char // Often a digit or letter
         );
@@ -60,7 +68,13 @@ impl Registry {
             None
         };
 
-        let code = format!("{}{}{}{}", bank, country, location, branch.as_deref().unwrap_or(""));
+        let code = format!(
+            "{}{}{}{}",
+            bank,
+            country,
+            location,
+            branch.as_deref().unwrap_or("")
+        );
 
         SwiftResult {
             code,

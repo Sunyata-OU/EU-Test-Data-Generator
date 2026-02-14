@@ -31,7 +31,11 @@ pub fn generate(opts: &super::GenOptions, rng: &mut impl Rng) -> String {
 
     let base = format!(
         "{:02}{:02}{:02}{}{:02}{:03}",
-        yy, month, day, century_gender, region,
+        yy,
+        month,
+        day,
+        century_gender,
+        region,
         seq % 1000
     );
     let digits: Vec<u8> = base.bytes().map(|b| b - b'0').collect();
@@ -63,18 +67,14 @@ pub fn parse(code: &str) -> IdResult {
             3 | 4 | 7 | 8 => 2000,
             _ => 1900,
         };
-        let d = format!(
-            "{:04}-{}-{}",
-            century + yy,
-            &clean[2..4],
-            &clean[4..6]
-        );
+        let d = format!("{:04}-{}-{}", century + yy, &clean[2..4], &clean[4..6]);
         (g, Some(d))
     } else {
         (None, None)
     };
 
-    IdResult { country_code: "".to_string(),
+    IdResult {
+        country_code: "".to_string(),
         code: if clean.len() == 13 {
             format!("{}-{}", &clean[0..6], &clean[6..13])
         } else {

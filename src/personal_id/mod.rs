@@ -61,9 +61,9 @@ pub mod eg;
 pub mod il;
 pub mod za;
 
+use date::Gender;
 #[cfg(feature = "json")]
 use serde::Serialize;
-use date::Gender;
 
 #[derive(Debug, Clone, Default)]
 pub struct GenOptions {
@@ -102,48 +102,184 @@ struct TerritoryAlias {
 
 static TERRITORY_ALIASES: &[TerritoryAlias] = &[
     // US territories
-    TerritoryAlias { code: "AS", country_name: "American Samoa", parent_code: "US" },
-    TerritoryAlias { code: "GU", country_name: "Guam", parent_code: "US" },
-    TerritoryAlias { code: "MP", country_name: "Northern Mariana Islands", parent_code: "US" },
-    TerritoryAlias { code: "PR", country_name: "Puerto Rico", parent_code: "US" },
-    TerritoryAlias { code: "UM", country_name: "US Minor Outlying Islands", parent_code: "US" },
-    TerritoryAlias { code: "VI", country_name: "US Virgin Islands", parent_code: "US" },
+    TerritoryAlias {
+        code: "AS",
+        country_name: "American Samoa",
+        parent_code: "US",
+    },
+    TerritoryAlias {
+        code: "GU",
+        country_name: "Guam",
+        parent_code: "US",
+    },
+    TerritoryAlias {
+        code: "MP",
+        country_name: "Northern Mariana Islands",
+        parent_code: "US",
+    },
+    TerritoryAlias {
+        code: "PR",
+        country_name: "Puerto Rico",
+        parent_code: "US",
+    },
+    TerritoryAlias {
+        code: "UM",
+        country_name: "US Minor Outlying Islands",
+        parent_code: "US",
+    },
+    TerritoryAlias {
+        code: "VI",
+        country_name: "US Virgin Islands",
+        parent_code: "US",
+    },
     // Australian territories
-    TerritoryAlias { code: "CC", country_name: "Cocos (Keeling) Islands", parent_code: "AU" },
-    TerritoryAlias { code: "CX", country_name: "Christmas Island", parent_code: "AU" },
-    TerritoryAlias { code: "HM", country_name: "Heard Island and McDonald Islands", parent_code: "AU" },
-    TerritoryAlias { code: "NF", country_name: "Norfolk Island", parent_code: "AU" },
+    TerritoryAlias {
+        code: "CC",
+        country_name: "Cocos (Keeling) Islands",
+        parent_code: "AU",
+    },
+    TerritoryAlias {
+        code: "CX",
+        country_name: "Christmas Island",
+        parent_code: "AU",
+    },
+    TerritoryAlias {
+        code: "HM",
+        country_name: "Heard Island and McDonald Islands",
+        parent_code: "AU",
+    },
+    TerritoryAlias {
+        code: "NF",
+        country_name: "Norfolk Island",
+        parent_code: "AU",
+    },
     // NZ territories
-    TerritoryAlias { code: "CK", country_name: "Cook Islands", parent_code: "NZ" },
-    TerritoryAlias { code: "NU", country_name: "Niue", parent_code: "NZ" },
-    TerritoryAlias { code: "PN", country_name: "Pitcairn Islands", parent_code: "NZ" },
-    TerritoryAlias { code: "TK", country_name: "Tokelau", parent_code: "NZ" },
+    TerritoryAlias {
+        code: "CK",
+        country_name: "Cook Islands",
+        parent_code: "NZ",
+    },
+    TerritoryAlias {
+        code: "NU",
+        country_name: "Niue",
+        parent_code: "NZ",
+    },
+    TerritoryAlias {
+        code: "PN",
+        country_name: "Pitcairn Islands",
+        parent_code: "NZ",
+    },
+    TerritoryAlias {
+        code: "TK",
+        country_name: "Tokelau",
+        parent_code: "NZ",
+    },
     // French territory
-    TerritoryAlias { code: "BL", country_name: "Saint Barthelemy", parent_code: "FR" },
+    TerritoryAlias {
+        code: "BL",
+        country_name: "Saint Barthelemy",
+        parent_code: "FR",
+    },
     // UK territories
-    TerritoryAlias { code: "GS", country_name: "South Georgia and the South Sandwich Islands", parent_code: "GB" },
-    TerritoryAlias { code: "IO", country_name: "British Indian Ocean Territory", parent_code: "GB" },
-    TerritoryAlias { code: "SH", country_name: "Saint Helena, Ascension and Tristan da Cunha", parent_code: "GB" },
+    TerritoryAlias {
+        code: "GS",
+        country_name: "South Georgia and the South Sandwich Islands",
+        parent_code: "GB",
+    },
+    TerritoryAlias {
+        code: "IO",
+        country_name: "British Indian Ocean Territory",
+        parent_code: "GB",
+    },
+    TerritoryAlias {
+        code: "SH",
+        country_name: "Saint Helena, Ascension and Tristan da Cunha",
+        parent_code: "GB",
+    },
     // Norwegian territories
-    TerritoryAlias { code: "BV", country_name: "Bouvet Island", parent_code: "NO" },
-    TerritoryAlias { code: "SJ", country_name: "Svalbard and Jan Mayen", parent_code: "NO" },
+    TerritoryAlias {
+        code: "BV",
+        country_name: "Bouvet Island",
+        parent_code: "NO",
+    },
+    TerritoryAlias {
+        code: "SJ",
+        country_name: "Svalbard and Jan Mayen",
+        parent_code: "NO",
+    },
     // Danish territories
-    TerritoryAlias { code: "FO", country_name: "Faroe Islands", parent_code: "DK" },
-    TerritoryAlias { code: "GL", country_name: "Greenland", parent_code: "DK" },
+    TerritoryAlias {
+        code: "FO",
+        country_name: "Faroe Islands",
+        parent_code: "DK",
+    },
+    TerritoryAlias {
+        code: "GL",
+        country_name: "Greenland",
+        parent_code: "DK",
+    },
     // French territories
-    TerritoryAlias { code: "GF", country_name: "French Guiana", parent_code: "FR" },
-    TerritoryAlias { code: "GP", country_name: "Guadeloupe", parent_code: "FR" },
-    TerritoryAlias { code: "MF", country_name: "Saint Martin", parent_code: "FR" },
-    TerritoryAlias { code: "MQ", country_name: "Martinique", parent_code: "FR" },
-    TerritoryAlias { code: "NC", country_name: "New Caledonia", parent_code: "FR" },
-    TerritoryAlias { code: "PF", country_name: "French Polynesia", parent_code: "FR" },
-    TerritoryAlias { code: "PM", country_name: "Saint Pierre and Miquelon", parent_code: "FR" },
-    TerritoryAlias { code: "RE", country_name: "Reunion", parent_code: "FR" },
-    TerritoryAlias { code: "TF", country_name: "French Southern Territories", parent_code: "FR" },
-    TerritoryAlias { code: "WF", country_name: "Wallis and Futuna", parent_code: "FR" },
-    TerritoryAlias { code: "YT", country_name: "Mayotte", parent_code: "FR" },
+    TerritoryAlias {
+        code: "GF",
+        country_name: "French Guiana",
+        parent_code: "FR",
+    },
+    TerritoryAlias {
+        code: "GP",
+        country_name: "Guadeloupe",
+        parent_code: "FR",
+    },
+    TerritoryAlias {
+        code: "MF",
+        country_name: "Saint Martin",
+        parent_code: "FR",
+    },
+    TerritoryAlias {
+        code: "MQ",
+        country_name: "Martinique",
+        parent_code: "FR",
+    },
+    TerritoryAlias {
+        code: "NC",
+        country_name: "New Caledonia",
+        parent_code: "FR",
+    },
+    TerritoryAlias {
+        code: "PF",
+        country_name: "French Polynesia",
+        parent_code: "FR",
+    },
+    TerritoryAlias {
+        code: "PM",
+        country_name: "Saint Pierre and Miquelon",
+        parent_code: "FR",
+    },
+    TerritoryAlias {
+        code: "RE",
+        country_name: "Reunion",
+        parent_code: "FR",
+    },
+    TerritoryAlias {
+        code: "TF",
+        country_name: "French Southern Territories",
+        parent_code: "FR",
+    },
+    TerritoryAlias {
+        code: "WF",
+        country_name: "Wallis and Futuna",
+        parent_code: "FR",
+    },
+    TerritoryAlias {
+        code: "YT",
+        country_name: "Mayotte",
+        parent_code: "FR",
+    },
     // UK territory
-    TerritoryAlias { code: "VG", country_name: "British Virgin Islands", parent_code: "GB" },
+    TerritoryAlias {
+        code: "VG",
+        country_name: "British Virgin Islands",
+        parent_code: "GB",
+    },
 ];
 
 fn resolve_alias(code: &str) -> Option<&'static TerritoryAlias> {

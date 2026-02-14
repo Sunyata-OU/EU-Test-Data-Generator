@@ -6,13 +6,32 @@ use super::IdResult;
 // Letter -> two-digit numeric value for checksum
 fn letter_value(c: u8) -> (u8, u8) {
     let vals: &[(u8, u8, u8)] = &[
-        (b'A', 1, 0), (b'B', 1, 1), (b'C', 1, 2), (b'D', 1, 3),
-        (b'E', 1, 4), (b'F', 1, 5), (b'G', 1, 6), (b'H', 1, 7),
-        (b'I', 3, 4), (b'J', 1, 8), (b'K', 1, 9), (b'L', 2, 0),
-        (b'M', 2, 1), (b'N', 2, 2), (b'O', 3, 5), (b'P', 2, 3),
-        (b'Q', 2, 4), (b'R', 2, 5), (b'S', 2, 6), (b'T', 2, 7),
-        (b'U', 2, 8), (b'V', 2, 9), (b'W', 3, 2), (b'X', 3, 0),
-        (b'Y', 3, 1), (b'Z', 3, 3),
+        (b'A', 1, 0),
+        (b'B', 1, 1),
+        (b'C', 1, 2),
+        (b'D', 1, 3),
+        (b'E', 1, 4),
+        (b'F', 1, 5),
+        (b'G', 1, 6),
+        (b'H', 1, 7),
+        (b'I', 3, 4),
+        (b'J', 1, 8),
+        (b'K', 1, 9),
+        (b'L', 2, 0),
+        (b'M', 2, 1),
+        (b'N', 2, 2),
+        (b'O', 3, 5),
+        (b'P', 2, 3),
+        (b'Q', 2, 4),
+        (b'R', 2, 5),
+        (b'S', 2, 6),
+        (b'T', 2, 7),
+        (b'U', 2, 8),
+        (b'V', 2, 9),
+        (b'W', 3, 2),
+        (b'X', 3, 0),
+        (b'Y', 3, 1),
+        (b'Z', 3, 3),
     ];
     for &(ch, d1, d2) in vals {
         if c == ch {
@@ -24,7 +43,7 @@ fn letter_value(c: u8) -> (u8, u8) {
 
 fn compute_check(letter: u8, digits: &[u8]) -> u8 {
     let (d1, d2) = letter_value(letter);
-    let mut sum = d1 as u32 * 1 + d2 as u32 * 9;
+    let mut sum = d1 as u32 + d2 as u32 * 9;
     let weights = [8u32, 7, 6, 5, 4, 3, 2, 1];
     for (d, w) in digits.iter().zip(weights.iter()) {
         sum += *d as u32 * w;
@@ -80,7 +99,8 @@ pub fn parse(code: &str) -> IdResult {
     } else {
         None
     };
-    IdResult { country_code: "".to_string(),
+    IdResult {
+        country_code: "".to_string(),
         code: code.to_string(),
         gender,
         dob: None,

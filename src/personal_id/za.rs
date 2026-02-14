@@ -17,7 +17,12 @@ pub fn generate(opts: &super::GenOptions, rng: &mut impl Rng) -> String {
 
     let base = format!(
         "{:02}{:02}{:02}{:04}{}{}",
-        year % 100, month, day, seq, citizen, filler
+        year % 100,
+        month,
+        day,
+        seq,
+        citizen,
+        filler
     );
     let digits: Vec<u8> = base.bytes().map(|b| b - b'0').collect();
     let check = checksum::luhn_check(&digits);
@@ -48,7 +53,8 @@ pub fn parse(code: &str) -> IdResult {
         (None, None)
     };
 
-    IdResult { country_code: "".to_string(),
+    IdResult {
+        country_code: "".to_string(),
         code: code.to_string(),
         gender,
         dob,
