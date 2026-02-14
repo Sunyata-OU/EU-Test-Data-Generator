@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="logo.png" alt="idsmith logo" width="200" />
+</p>
+
 # idsmith
 
 [![Crates.io](https://img.shields.io/crates/v/idsmith)](https://crates.io/crates/idsmith)
