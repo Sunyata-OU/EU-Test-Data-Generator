@@ -1,0 +1,33 @@
+[build-system]
+requires = ["maturin>=1.5,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "idsmith"
+version = "0.4.0"
+description = "Validate and generate checksum-correct IBANs, personal IDs, bank accounts, credit cards, SWIFT/BIC, and company IDs for 252 countries"
+authors = [
+    {name = "Tony Benoy", email = "me@tonybenoy.com"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Rust",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Topic :: Software Development :: Testing",
+]
+keywords = ["validator", "iban", "personal-id", "test-data", "generator"]
+
+[project.urls]
+Homepage = "https://github.com/Sunyata-OU/idsmith"
+Repository = "https://github.com/Sunyata-OU/idsmith"
+
+[tool.maturin]
+features = ["pyo3/extension-module"]
+python-source = "python"
+module-name = "idsmith._idsmith"

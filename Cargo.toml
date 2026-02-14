@@ -9,6 +9,9 @@ keywords = ["validator", "iban", "personal-id", "test-data", "generator"]
 categories = ["development-tools::testing", "finance", "command-line-utilities", "value-formatting"]
 repository = "https://github.com/Sunyata-OU/idsmith"
 
+[workspace]
+members = [".", "bindings/python", "bindings/node"]
+
 [lib]
 name = "idsmith"
 path = "src/lib.rs"

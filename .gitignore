@@ -1,2 +1,19 @@
 /target
 Cargo.lock
+docs/book/
+
+# Python
+bindings/python/target/
+bindings/python/.venv/
+bindings/python/dist/
+__pycache__/
+*.pyc
+*.so
+*.pyd
+
+# Node
+bindings/node/target/
+bindings/node/node_modules/
+bindings/node/*.node
+bindings/node/index.js
+bindings/node/index.d.ts

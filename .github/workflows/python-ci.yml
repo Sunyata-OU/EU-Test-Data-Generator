@@ -1,0 +1,58 @@
+name: Python Bindings CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'bindings/python/**'
+      - 'src/**'
+      - 'Cargo.toml'
+      - '.github/workflows/python-ci.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'bindings/python/**'
+      - 'src/**'
+      - 'Cargo.toml'
+      - '.github/workflows/python-ci.yml'
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  test:
+    name: Test Python ${{ matrix.python-version }} / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Install maturin and pytest
+        run: pip install maturin[patchelf] pytest
+
+      - name: Build and install
+        working-directory: bindings/python
+        run: maturin develop --release
+
+      - name: Run tests
+        working-directory: bindings/python
+        run: pytest tests/ -v
+
+  clippy:
+    name: Clippy (Python bindings)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - run: cargo clippy -p idsmith-python -- -D warnings

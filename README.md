@@ -1,137 +1,74 @@
 # idsmith
 
+[![Crates.io](https://img.shields.io/crates/v/idsmith)](https://crates.io/crates/idsmith)
+[![Docs](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://sunyata-ou.github.io/idsmith/)
+[![CI](https://github.com/Sunyata-OU/idsmith/actions/workflows/ci.yml/badge.svg)](https://github.com/Sunyata-OU/idsmith/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 Validate and generate checksum-correct **IBANs**, **personal IDs**, **bank accounts**, **credit cards**, **SWIFT/BIC**, and **company IDs** for 252 countries.
 
-Built for developers and QA engineers who need a robust way to validate existing identifiers or create realistic, algorithmically valid test data.
+Available as a **Rust crate**, **Python package**, and **Node.js module** — all powered by the same Rust core.
+
+**[Read the full documentation →](https://sunyata-ou.github.io/idsmith/)**
+
+## Install
+
+```bash
+# Rust
+cargo add idsmith
+
+# Python
+pip install idsmith
+
+# Node.js
+npm install idsmith
+```
+
+## Quick Example
+
+```rust
+// Rust
+use idsmith::{credit_cards, personal_ids};
+
+let valid = credit_cards().validate("4152839405126374");
+let ssn_ok = personal_ids().validate("US", "446-72-2445").unwrap_or(false);
+```
+
+```python
+# Python
+import idsmith
+
+idsmith.CreditCard.validate("4152839405126374")      # True
+idsmith.PersonalId.validate("US", "446-72-2445")      # True
+iban = idsmith.generate_iban("DE")
+```
+
+```javascript
+// Node.js
+const { CreditCard, PersonalId, generateIban } = require('idsmith');
+
+CreditCard.validate('4152839405126374');      // true
+PersonalId.validate('US', '446-72-2445');     // true
+const iban = generateIban('DE');
+```
 
 ## Features
 
-- **Validator + Generator** — verify existing strings or create new data
-- **96 IBAN countries** — full IBAN registry coverage with mod-97-10 checksum validation
-- **252 bank account formats** — US ABA routing, MX CLABE, AU BSB, IN IFSC, AR CBU, NG NUBAN, BR mod-11, etc.
-- **252 personal ID formats** — 56 checksum-verified (SSN, CPF, Aadhaar, Resident ID) + generic fallbacks
-- **252 company ID formats** — VAT numbers, EINs, and Business IDs with major economy checksums
-- **Universal Credit Cards** — Visa, Mastercard, Amex, Discover, JCB, and Diners Club with Luhn support
-- **SWIFT/BIC** — valid 8 and 11 character codes with ISO country positioning
-- **Single binary** — instant startup, no runtime dependencies
-- **Library + CLI** — use as a lightweight Rust crate or a standalone tool
-- **JSON & CSV export** — built-in support for RFC 4180 CSV and pretty-printed JSON
+- **96 IBAN countries** with mod-97-10 checksum validation
+- **252 bank account formats** — US ABA, MX CLABE, AU BSB, IN IFSC, and more
+- **56 checksum-verified personal IDs** — SSN, CPF, Aadhaar, PESEL, Codice Fiscale, etc.
+- **6 credit card brands** — Visa, Mastercard, Amex, Discover, JCB, Diners (Luhn)
+- **SWIFT/BIC codes** — valid 8 and 11 character codes
+- **252 company ID formats** — VAT numbers, EINs, CIFs with checksums
+- **CLI tool** with JSON and CSV export
 
-## Installation
+## Documentation
 
-```bash
-cargo install --path .
-```
-
-## CLI Usage
-
-### 1. Validating Data
-Use the `validate` command to check if a code is checksum and format correct.
-
-```bash
-# Validate an IBAN
-idsmith validate iban DE47508562162522867909
-
-# Validate a National ID (requires country code)
-idsmith validate id 446-72-2445 --country US
-
-# Validate a Credit Card
-idsmith validate card 5590133141634919
-```
-
-### 2. Generating Data
-Generate any identifier using subcommands. Use the optional count positional argument.
-
-```bash
-# Generate 5 German IBANs
-idsmith iban DE 5
-
-# Generate 3 US Bank Accounts in JSON
-idsmith account 3 --country US --json -
-
-# Generate a random Credit Card
-idsmith card --brand amex
-```
-
-## Library (SDK) Usage
-
-Add `idsmith` to your `Cargo.toml`. For a lightweight build, disable default features to exclude the CLI logic.
-
-```toml
-[dependencies]
-idsmith = { version = "0.4.0", default-features = false }
-```
-
-### SDK Validation API
-
-```rust
-use idsmith::{credit_cards, personal_ids, bank_accounts, company_ids, swift_codes};
-
-// Global registries provide thread-safe, easy access
-let cards = credit_cards();
-let ids = personal_ids();
-
-// 1. Validate simple formats (returns bool)
-let card_ok = cards.validate("4152839405126374");
-let swift_ok = swift_codes().validate("PBIHNLY9XXX");
-
-// 2. Validate country-specific formats (returns Option<bool>)
-// None is returned if the country is not supported or structurally invalid
-let ssn_ok = ids.validate("US", "446-72-2445").unwrap_or(false);
-let vat_ok = company_ids().validate("DE", "DE141158922").unwrap_or(false);
-let acc_ok = bank_accounts().validate("MX", "167078019952865929").unwrap_or(false);
-
-// 3. IBAN validation
-let iban_ok = idsmith::iban::validate_iban("DE47508562162522867909");
-```
-
-### SDK Generation API
-
-```rust
-use rand::thread_rng;
-let mut rng = thread_rng();
-
-// Generate with default options
-let card = credit_cards().generate(&Default::default(), &mut rng).unwrap();
-let id = ids.generate("BR", &Default::default(), &mut rng).unwrap();
-
-// Parse an existing ID to extract metadata
-let result = ids.parse("FI", "050497-598S").unwrap();
-println!("DOB: {:?}, Gender: {:?}", result.dob, result.gender);
-```
-
-## Performance
-
-Built in Rust, `idsmith` is designed for high-performance validation and generation, significantly outperforming interpreted alternatives in both raw throughput and CLI startup.
-
-### Validation Throughput (IBAN)
-*Measured on 100,000 iterations.*
-
-| Library | Language | Throughput | Relative Speed |
-| :--- | :--- | :--- | :--- |
-| **idsmith** | **Rust** | **~1,350,000 ops/s** | **1.0x** |
-| `ibantools` | Node.js | ~490,000 ops/s | ~2.7x slower |
-| `python-stdnum`| Python | ~53,000 ops/s | ~25x slower |
-
-### CLI Startup Overhead
-*Average time per command execution.*
-
-| Tool | Startup Time | Overhead |
-| :--- | :--- | :--- |
-| **idsmith (Rust)** | **~1ms** | **Baseline** |
-| `python-stdnum` (Python) | ~62ms | ~60x slower |
-
-## Validation Standards
-
-Accuracy is ensured by cross-validating against established industry libraries. Verification scripts are available in the `scripts/` directory.
-
-| Category | Validation Source |
-|----------|-------------------|
-| IBAN | [ibantools](https://www.npmjs.com/package/ibantools) |
-| Personal ID | [python-stdnum](https://github.com/arthurdejong/python-stdnum), [taiwan-id](https://www.npmjs.com/package/taiwan-id) |
-| Bank Account | [abavalidator](https://www.npmjs.com/package/abavalidator), [clabe-validator](https://github.com/center-key/clabe-validator) |
-| Credit Card | ISO/IEC 7812 (Luhn Algorithm) |
-| SWIFT/BIC | ISO 9362 Standards |
+- [Full Documentation](https://sunyata-ou.github.io/idsmith/)
+- [Rust API Reference](https://sunyata-ou.github.io/idsmith/api/rust/idsmith/index.html)
+- [Python Quick Start](https://sunyata-ou.github.io/idsmith/python/quick-start.html)
+- [Node.js Quick Start](https://sunyata-ou.github.io/idsmith/node/quick-start.html)
+- [CLI Usage](https://sunyata-ou.github.io/idsmith/rust/cli.html)
 
 ## License
 

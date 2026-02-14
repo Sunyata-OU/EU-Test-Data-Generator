@@ -1,0 +1,10 @@
+[book]
+title = "idsmith"
+authors = ["Tony Benoy"]
+language = "en"
+src = "src"
+
+[output.html]
+git-repository-url = "https://github.com/Sunyata-OU/idsmith"
+default-theme = "light"
+preferred-dark-theme = "ayu"

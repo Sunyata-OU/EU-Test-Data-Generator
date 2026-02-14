@@ -1,0 +1,39 @@
+{
+  "name": "idsmith",
+  "version": "0.4.0",
+  "description": "Validate and generate checksum-correct IBANs, personal IDs, bank accounts, credit cards, SWIFT/BIC, and company IDs for 252 countries",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "napi": {
+    "name": "idsmith",
+    "triples": {
+      "defaults": true,
+      "additional": [
+        "aarch64-apple-darwin",
+        "aarch64-unknown-linux-gnu",
+        "aarch64-unknown-linux-musl"
+      ]
+    }
+  },
+  "keywords": ["validator", "iban", "personal-id", "test-data", "generator"],
+  "author": "Tony Benoy <me@tonybenoy.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Sunyata-OU/idsmith"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "napi build --platform --release --manifest-path Cargo.toml",
+    "build:debug": "napi build --platform --manifest-path Cargo.toml",
+    "test": "node --test __test__/index.spec.mjs",
+    "artifacts": "napi artifacts",
+    "prepublishOnly": "napi prepublish -t npm",
+    "version": "napi version"
+  },
+  "devDependencies": {
+    "@napi-rs/cli": "^2.18.0"
+  }
+}
