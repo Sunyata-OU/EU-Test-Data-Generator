@@ -1,6 +1,6 @@
 # Credit Card
 
-Generate and validate credit card numbers for 6 major brands with Luhn checksum.
+Generate and validate credit card numbers for 6 major brands with Luhn checksum. Generated cards include CVV (3 digits, 4 for Amex) and a random future expiration date.
 
 ## Supported Brands
 
@@ -32,6 +32,8 @@ let visa = registry.generate(&opts, &mut rng).unwrap();
 // visa.brand     → "VISA"
 // visa.number    → "4152839405126374"
 // visa.formatted → "4152 8394 0512 6374"
+// visa.cvv       → "123"
+// visa.expiry    → "09/28"
 ```
 
 ### Python
@@ -41,6 +43,8 @@ import idsmith
 card = idsmith.CreditCard.generate()           # random brand
 visa = idsmith.CreditCard.generate(brand="visa")  # specific brand
 print(visa["formatted"])  # 4152 8394 0512 6374
+print(visa["cvv"])        # 123
+print(visa["expiry"])     # 09/28
 ```
 
 ### JavaScript
@@ -50,6 +54,8 @@ const { CreditCard } = require('idsmith');
 const card = CreditCard.generate();        // random brand
 const visa = CreditCard.generate('visa');  // specific brand
 console.log(visa.formatted);  // 4152 8394 0512 6374
+console.log(visa.cvv);        // 123
+console.log(visa.expiry);     // 09/28
 ```
 
 ## Validate

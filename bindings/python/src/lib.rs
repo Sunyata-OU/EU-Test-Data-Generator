@@ -35,6 +35,8 @@ fn card_result_to_dict(py: Python<'_>, r: &idsmith::credit_card::CardResult) -> 
     dict.set_item("brand", &r.brand).unwrap();
     dict.set_item("number", &r.number).unwrap();
     dict.set_item("formatted", &r.formatted).unwrap();
+    dict.set_item("cvv", &r.cvv).unwrap();
+    dict.set_item("expiry", &r.expiry).unwrap();
     dict.set_item("valid", r.valid).unwrap();
     dict.into()
 }

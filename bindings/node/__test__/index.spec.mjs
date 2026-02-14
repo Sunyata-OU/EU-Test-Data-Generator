@@ -99,6 +99,10 @@ describe('CreditCard', () => {
     assert.ok(result.valid);
     assert.ok(result.number);
     assert.ok(result.brand);
+    assert.ok(result.cvv);
+    assert.ok([3, 4].includes(result.cvv.length));
+    assert.ok(result.expiry);
+    assert.ok(result.expiry.includes('/'));
   });
 
   it('should generate a Visa card', () => {
@@ -113,7 +117,7 @@ describe('CreditCard', () => {
   });
 
   it('should reject invalid card', () => {
-    assert.ok(!CreditCard.validate('0000000000000000'));
+    assert.ok(!CreditCard.validate('1234567890123456'));
   });
 
   it('should list brands', () => {

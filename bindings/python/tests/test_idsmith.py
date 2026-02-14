@@ -81,6 +81,10 @@ def test_credit_card_generate():
     assert result["valid"] is True
     assert result["number"]
     assert result["brand"]
+    assert result["cvv"]
+    assert len(result["cvv"]) in (3, 4)
+    assert result["expiry"]
+    assert "/" in result["expiry"]
 
 
 def test_credit_card_generate_visa():
@@ -95,7 +99,7 @@ def test_credit_card_validate():
 
 
 def test_credit_card_validate_invalid():
-    assert not idsmith.CreditCard.validate("0000000000000000")
+    assert not idsmith.CreditCard.validate("1234567890123456")
 
 
 def test_credit_card_list_brands():

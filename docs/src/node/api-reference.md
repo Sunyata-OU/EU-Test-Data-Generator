@@ -77,6 +77,8 @@ interface CardResult {
   brand: string;
   number: string;
   formatted: string;
+  cvv: string;
+  expiry: string;
   valid: boolean;
 }
 ```

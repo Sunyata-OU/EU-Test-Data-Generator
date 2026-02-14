@@ -39,9 +39,13 @@ jobs:
       - name: Install tools
         run: pip install maturin[patchelf] pytest
 
-      - name: Build and install
+      - name: Build wheel
         working-directory: bindings/python
-        run: maturin develop --release
+        run: maturin build --release --find-interpreter
+
+      - name: Install wheel
+        working-directory: bindings/python
+        run: pip install --find-links target/wheels idsmith
 
       - name: Run tests
         working-directory: bindings/python

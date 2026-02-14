@@ -75,6 +75,8 @@
     "brand": "VISA",
     "number": "4152839405126374",
     "formatted": "4152 8394 0512 6374",
+    "cvv": "123",
+    "expiry": "09/28",
     "valid": True
 }
 ```

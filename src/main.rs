@@ -512,8 +512,8 @@ fn main() {
 
                     if print_it {
                         println!(
-                            "{} ({}): {}  (valid: {})",
-                            result.brand, result.formatted, result.number, result.valid
+                            "{} ({}): {}  CVV: {}  Exp: {}  (valid: {})",
+                            result.brand, result.formatted, result.number, result.cvv, result.expiry, result.valid
                         );
                     }
                 }

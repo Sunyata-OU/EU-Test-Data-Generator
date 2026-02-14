@@ -30,7 +30,7 @@ pub const IBAN_HEADER: &str = "country,iban,iban_formatted,valid";
 pub const ID_HEADER: &str = "country,id_name,code,gender,dob,valid";
 
 /// CSV header for credit card rows.
-pub const CARD_HEADER: &str = "brand,number,formatted,valid";
+pub const CARD_HEADER: &str = "brand,number,formatted,cvv,expiry,valid";
 
 /// CSV header for SWIFT rows.
 pub const SWIFT_HEADER: &str = "country,bank,location,branch,code,valid";
@@ -65,10 +65,12 @@ pub fn id_row(country: &str, id_name: &str, result: &IdResult) -> String {
 /// Format a single credit card result as a CSV row.
 pub fn card_row(result: &CardResult) -> String {
     format!(
-        "{},{},{},{}",
+        "{},{},{},{},{},{}",
         csv_field(&result.brand),
         csv_field(&result.number),
         csv_field(&result.formatted),
+        csv_field(&result.cvv),
+        csv_field(&result.expiry),
         result.valid
     )
 }

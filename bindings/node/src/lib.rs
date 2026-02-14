@@ -63,6 +63,8 @@ pub struct CardResult {
     pub brand: String,
     pub number: String,
     pub formatted: String,
+    pub cvv: String,
+    pub expiry: String,
     pub valid: bool,
 }
 
@@ -72,6 +74,8 @@ impl From<idsmith::credit_card::CardResult> for CardResult {
             brand: r.brand,
             number: r.number,
             formatted: r.formatted,
+            cvv: r.cvv,
+            expiry: r.expiry,
             valid: r.valid,
         }
     }

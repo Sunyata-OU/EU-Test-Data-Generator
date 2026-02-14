@@ -9,6 +9,8 @@ pub struct CardResult {
     pub brand: String,
     pub number: String,
     pub formatted: String,
+    pub cvv: String,
+    pub expiry: String,
     pub valid: bool,
 }
 
@@ -82,10 +84,25 @@ impl Registry {
         let number: String = digits.iter().map(|d| (b'0' + d) as char).collect();
         let formatted = self.format(&brand_name, &number);
 
+        let cvv_len = if brand_name == "amex" { 4 } else { 3 };
+        let cvv: String = (0..cvv_len).map(|_| (b'0' + rng.gen_range(0..=9)) as char).collect();
+
+        let now = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_secs();
+        let current_year = (1970 + now / 31_536_000) % 100;
+        let current_year = current_year as u16;
+        let year = rng.gen_range(current_year..=current_year + 5);
+        let month = rng.gen_range(1..=12u8);
+        let expiry = format!("{:02}/{:02}", month, year);
+
         Some(CardResult {
             brand: brand_name.to_uppercase(),
             number,
             formatted,
+            cvv,
+            expiry,
             valid: true,
         })
     }
