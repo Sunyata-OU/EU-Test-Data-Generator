@@ -100,6 +100,27 @@ let result = ids.parse("FI", "050497-598S").unwrap();
 println!("DOB: {:?}, Gender: {:?}", result.dob, result.gender);
 ```
 
+## Performance
+
+Built in Rust, `idsmith` is designed for high-performance validation and generation, significantly outperforming interpreted alternatives in both raw throughput and CLI startup.
+
+### Validation Throughput (IBAN)
+*Measured on 100,000 iterations.*
+
+| Library | Language | Throughput | Relative Speed |
+| :--- | :--- | :--- | :--- |
+| **idsmith** | **Rust** | **~1,350,000 ops/s** | **1.0x** |
+| `ibantools` | Node.js | ~490,000 ops/s | ~2.7x slower |
+| `python-stdnum`| Python | ~53,000 ops/s | ~25x slower |
+
+### CLI Startup Overhead
+*Average time per command execution.*
+
+| Tool | Startup Time | Overhead |
+| :--- | :--- | :--- |
+| **idsmith (Rust)** | **~1ms** | **Baseline** |
+| `python-stdnum` (Python) | ~62ms | ~60x slower |
+
 ## Validation Standards
 
 Accuracy is ensured by cross-validating against established industry libraries. Verification scripts are available in the `scripts/` directory.
