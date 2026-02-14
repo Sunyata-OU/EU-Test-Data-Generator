@@ -66,6 +66,18 @@ const iban = generateIban('DE');
 - **252 company ID formats** — VAT numbers, EINs, CIFs with checksums
 - **CLI tool** with JSON and CSV export
 
+## Performance
+
+IBAN validation throughput (100k iterations, single-threaded):
+
+| Library | Language | Throughput | vs idsmith |
+|---------|----------|-----------|------------|
+| **idsmith** | **Rust** | **~1,350,000 ops/s** | **—** |
+| `ibantools` | Node.js | ~490,000 ops/s | ~2.7x slower |
+| `python-stdnum` | Python | ~53,000 ops/s | ~25x slower |
+
+Python and Node.js bindings call the same Rust core — same speed, same correctness.
+
 ## Projects Using idsmith
 
 - [MockBanker](https://tonybenoy.github.io/mockbanker/) — Web app implementing nearly all idsmith features, generate realistic mock banking and identity data in the browser
