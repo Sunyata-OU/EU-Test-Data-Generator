@@ -36,8 +36,13 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@stable
 
-      - name: Install tools
+      - name: Install tools (Linux)
+        if: runner.os == 'Linux'
         run: pip install maturin[patchelf] pytest
+
+      - name: Install tools (non-Linux)
+        if: runner.os != 'Linux'
+        run: pip install maturin pytest
 
       - name: Build wheel
         working-directory: bindings/python
