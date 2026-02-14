@@ -6,7 +6,7 @@ authors = ["Tony Benoy <me@tonybenoy.com>"]
 description = "Validate and generate checksum-correct IBANs, personal IDs, bank accounts, credit cards, SWIFT/BIC, and company IDs for 252 countries."
 license = "MIT"
 keywords = ["validator", "iban", "personal-id", "test-data", "generator"]
-categories = ["command-line-utilities", "development-tools::testing"]
+categories = ["development-tools::testing", "finance", "command-line-utilities", "value-formatting"]
 repository = "https://github.com/Sunyata-OU/idsmith"
 
 [lib]
