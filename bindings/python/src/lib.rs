@@ -1,12 +1,11 @@
 #![allow(clippy::useless_conversion)]
 
-use pyo3::conversion::ToPyObject;
 use pyo3::prelude::*;
 use pyo3::types::PyDict;
 use rand::thread_rng;
 
 fn account_result_to_dict(py: Python<'_>, r: &idsmith::bank_account::AccountResult) -> PyObject {
-    let dict = PyDict::new_bound(py);
+    let dict = PyDict::new(py);
     dict.set_item("country_code", &r.country_code).unwrap();
     dict.set_item("country_name", &r.country_name).unwrap();
     dict.set_item("format_name", &r.format_name).unwrap();
@@ -22,7 +21,7 @@ fn account_result_to_dict(py: Python<'_>, r: &idsmith::bank_account::AccountResu
 }
 
 fn id_result_to_dict(py: Python<'_>, r: &idsmith::personal_id::IdResult) -> PyObject {
-    let dict = PyDict::new_bound(py);
+    let dict = PyDict::new(py);
     dict.set_item("country_code", &r.country_code).unwrap();
     dict.set_item("code", &r.code).unwrap();
     dict.set_item("gender", &r.gender).unwrap();
@@ -32,7 +31,7 @@ fn id_result_to_dict(py: Python<'_>, r: &idsmith::personal_id::IdResult) -> PyOb
 }
 
 fn card_result_to_dict(py: Python<'_>, r: &idsmith::credit_card::CardResult) -> PyObject {
-    let dict = PyDict::new_bound(py);
+    let dict = PyDict::new(py);
     dict.set_item("brand", &r.brand).unwrap();
     dict.set_item("number", &r.number).unwrap();
     dict.set_item("formatted", &r.formatted).unwrap();
@@ -41,7 +40,7 @@ fn card_result_to_dict(py: Python<'_>, r: &idsmith::credit_card::CardResult) -> 
 }
 
 fn company_result_to_dict(py: Python<'_>, r: &idsmith::company_id::CompanyResult) -> PyObject {
-    let dict = PyDict::new_bound(py);
+    let dict = PyDict::new(py);
     dict.set_item("country_code", &r.country_code).unwrap();
     dict.set_item("country_name", &r.country_name).unwrap();
     dict.set_item("name", &r.name).unwrap();
@@ -51,7 +50,7 @@ fn company_result_to_dict(py: Python<'_>, r: &idsmith::company_id::CompanyResult
 }
 
 fn swift_result_to_dict(py: Python<'_>, r: &idsmith::swift::SwiftResult) -> PyObject {
-    let dict = PyDict::new_bound(py);
+    let dict = PyDict::new(py);
     dict.set_item("code", &r.code).unwrap();
     dict.set_item("bank", &r.bank).unwrap();
     dict.set_item("country", &r.country).unwrap();
@@ -105,7 +104,7 @@ impl BankAccount {
             .list_countries()
             .iter()
             .map(|(code, name, format_name, has_iban)| {
-                let dict = PyDict::new_bound(py);
+                let dict = PyDict::new(py);
                 dict.set_item("code", code).unwrap();
                 dict.set_item("name", name).unwrap();
                 dict.set_item("format", format_name).unwrap();
@@ -113,7 +112,7 @@ impl BankAccount {
                 dict.into()
             })
             .collect();
-        Ok(countries.to_object(py))
+        Ok(countries.into_pyobject(py)?.into())
     }
 
     #[staticmethod]
@@ -167,14 +166,14 @@ impl PersonalId {
             .list_countries()
             .iter()
             .map(|(code, country_name, id_name)| {
-                let dict = PyDict::new_bound(py);
+                let dict = PyDict::new(py);
                 dict.set_item("code", code).unwrap();
                 dict.set_item("country_name", country_name).unwrap();
                 dict.set_item("id_name", id_name).unwrap();
                 dict.into()
             })
             .collect();
-        Ok(countries.to_object(py))
+        Ok(countries.into_pyobject(py)?.into())
     }
 
     #[staticmethod]
@@ -248,14 +247,14 @@ impl CompanyId {
             .list_countries()
             .iter()
             .map(|(code, country_name, id_name)| {
-                let dict = PyDict::new_bound(py);
+                let dict = PyDict::new(py);
                 dict.set_item("code", code).unwrap();
                 dict.set_item("country_name", country_name).unwrap();
                 dict.set_item("id_name", id_name).unwrap();
                 dict.into()
             })
             .collect();
-        Ok(countries.to_object(py))
+        Ok(countries.into_pyobject(py)?.into())
     }
 }
 
