@@ -61,6 +61,8 @@ pub mod eg;
 pub mod il;
 pub mod za;
 
+#[cfg(feature = "json")]
+use serde::Serialize;
 use date::Gender;
 
 #[derive(Debug, Clone, Default)]
@@ -70,7 +72,9 @@ pub struct GenOptions {
 }
 
 #[derive(Debug, Clone)]
+#[cfg_attr(feature = "json", derive(Serialize))]
 pub struct IdResult {
+    pub country_code: String,
     pub code: String,
     pub gender: Option<String>,
     pub dob: Option<String>,
@@ -658,7 +662,6 @@ impl Registry {
         None
     }
 
-    #[allow(dead_code)]
     pub fn validate(&self, country: &str, code: &str) -> Option<bool> {
         if let Some(entry) = self.find(country) {
             return Some((entry.validate)(code));
@@ -676,19 +679,21 @@ impl Registry {
     }
 
     pub fn parse(&self, country: &str, code: &str) -> Option<IdResult> {
-        if let Some(entry) = self.find(country) {
-            return Some((entry.parse)(code));
-        }
-        if let Some(result) = generic::parse(country, code) {
-            return Some(result);
-        }
-        if let Some(alias) = resolve_alias(country) {
+        let mut result = if let Some(entry) = self.find(country) {
+            (entry.parse)(code)
+        } else if let Some(res) = generic::parse(country, code) {
+            res
+        } else if let Some(alias) = resolve_alias(country) {
             if let Some(entry) = self.find(alias.parent_code) {
-                return Some((entry.parse)(code));
+                (entry.parse)(code)
+            } else {
+                generic::parse(alias.parent_code, code)?
             }
-            return generic::parse(alias.parent_code, code);
-        }
-        None
+        } else {
+            return None;
+        };
+        result.country_code = country.to_string();
+        Some(result)
     }
 
     pub fn name(&self, country: &str) -> Option<&str> {

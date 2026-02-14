@@ -3,7 +3,7 @@ use std::io::Write;
 use clap::{Parser, Subcommand};
 use rand::{thread_rng, Rng};
 
-use idsmith::{bank_account, csv as csv_fmt, iban, personal_id};
+use idsmith::{bank_account, company_id, credit_card, csv as csv_fmt, iban, personal_id, swift};
 
 #[derive(Parser)]
 #[command(name = "idsmith")]
@@ -25,6 +25,10 @@ enum Commands {
         /// Export as CSV (optionally to a file path)
         #[arg(long, num_args = 0..=1, default_missing_value = "-")]
         csv: Option<String>,
+        /// Export as JSON (optionally to a file path)
+        #[cfg(feature = "json")]
+        #[arg(long, num_args = 0..=1, default_missing_value = "-")]
+        json: Option<String>,
     },
     /// Generate random bank account numbers
     Account {
@@ -40,6 +44,10 @@ enum Commands {
         /// Export as CSV (optionally to a file path)
         #[arg(long, num_args = 0..=1, default_missing_value = "-")]
         csv: Option<String>,
+        /// Export as JSON (optionally to a file path)
+        #[cfg(feature = "json")]
+        #[arg(long, num_args = 0..=1, default_missing_value = "-")]
+        json: Option<String>,
     },
     /// Generate random personal ID codes
     Id {
@@ -61,6 +69,76 @@ enum Commands {
         /// Export as CSV (optionally to a file path)
         #[arg(long, num_args = 0..=1, default_missing_value = "-")]
         csv: Option<String>,
+        /// Export as JSON (optionally to a file path)
+        #[cfg(feature = "json")]
+        #[arg(long, num_args = 0..=1, default_missing_value = "-")]
+        json: Option<String>,
+    },
+    /// Generate random credit card numbers
+    Card {
+        /// Number of cards to generate
+        #[arg(default_value = "1")]
+        count: u32,
+        /// Brand (visa, mastercard, amex, discover, jcb, diners)
+        #[arg(long)]
+        brand: Option<String>,
+        /// List all supported brands
+        #[arg(long)]
+        list: bool,
+        /// Export as CSV (optionally to a file path)
+        #[arg(long, num_args = 0..=1, default_missing_value = "-")]
+        csv: Option<String>,
+        /// Export as JSON (optionally to a file path)
+        #[cfg(feature = "json")]
+        #[arg(long, num_args = 0..=1, default_missing_value = "-")]
+        json: Option<String>,
+    },
+    /// Generate random SWIFT/BIC codes
+    Swift {
+        /// Number of codes to generate
+        #[arg(default_value = "1")]
+        count: u32,
+        /// Country code (e.g., US, GB)
+        #[arg(long)]
+        country: Option<String>,
+        /// Export as CSV (optionally to a file path)
+        #[arg(long, num_args = 0..=1, default_missing_value = "-")]
+        csv: Option<String>,
+        /// Export as JSON (optionally to a file path)
+        #[cfg(feature = "json")]
+        #[arg(long, num_args = 0..=1, default_missing_value = "-")]
+        json: Option<String>,
+    },
+    /// Generate random Company/Business IDs (VAT, CIF, etc.)
+    Company {
+        /// Number of IDs to generate
+        #[arg(default_value = "1")]
+        count: u32,
+        /// Country code (e.g., DE, GB, FR, IT, ES)
+        #[arg(long)]
+        country: Option<String>,
+        /// List all supported countries
+        #[arg(long)]
+        list: bool,
+        /// Export as CSV (optionally to a file path)
+        #[arg(long, num_args = 0..=1, default_missing_value = "-")]
+        csv: Option<String>,
+        /// Export as JSON (optionally to a file path)
+        #[cfg(feature = "json")]
+        #[arg(long, num_args = 0..=1, default_missing_value = "-")]
+        json: Option<String>,
+    },
+    /// Validate an existing code
+    Validate {
+        /// Category (iban, account, id, card, swift, company)
+        #[arg(index = 1)]
+        category: String,
+        /// Code to validate
+        #[arg(index = 2)]
+        code: String,
+        /// Country code (required for most categories)
+        #[arg(long)]
+        country: Option<String>,
     },
 }
 
@@ -84,6 +162,7 @@ fn main() {
             country,
             count,
             csv,
+            json,
         } => {
             // Handle case where user passes just a number (e.g., `iban 3`)
             // clap parses it as country="3", count=1
@@ -94,38 +173,68 @@ fn main() {
                 _ => (country.as_deref(), count),
             };
 
-            let mut out: Option<Box<dyn Write>> = csv.as_deref().map(csv_writer);
-            if let Some(ref mut w) = out {
+            let mut out_csv: Option<Box<dyn Write>> = csv.as_deref().map(csv_writer);
+            if let Some(ref mut w) = out_csv {
                 writeln!(w, "{}", csv_fmt::IBAN_HEADER).unwrap();
             }
+
+            #[cfg(feature = "json")]
+            let mut json_results = Vec::new();
 
             for _ in 0..actual_count {
                 match iban::generate_iban(actual_country, &mut rng) {
                     Ok(iban_code) => {
                         let valid = iban::validate_iban(&iban_code);
-                        if let Some(ref mut w) = out {
+                        let formatted = iban::format_iban(&iban_code);
+                        
+                        #[cfg(feature = "json")]
+                        if json.is_some() {
+                            json_results.push(iban::IbanResult {
+                                country: iban_code[..2].to_string(),
+                                iban: iban_code.clone(),
+                                formatted: formatted.clone(),
+                                valid,
+                            });
+                        }
+
+                        if let Some(ref mut w) = out_csv {
                             writeln!(
                                 w,
                                 "{}",
                                 csv_fmt::iban_row(
                                     &iban_code,
-                                    &iban::format_iban(&iban_code),
+                                    &formatted,
                                     valid
                                 )
                             )
                             .unwrap();
                         } else {
-                            println!(
-                                "{}  (valid: {})",
-                                iban::format_iban(&iban_code),
-                                if valid { "True" } else { "False" }
-                            );
+                            let mut print_it = true;
+                            #[cfg(feature = "json")]
+                            if json.is_some() { print_it = false; }
+
+                            if print_it {
+                                println!(
+                                    "{}  (valid: {})",
+                                    formatted,
+                                    if valid { "True" } else { "False" }
+                                );
+                            }
                         }
                     }
                     Err(e) => {
                         eprintln!("{}", e);
                         std::process::exit(1);
                     }
+                }
+            }
+
+            #[cfg(feature = "json")]
+            if let Some(path) = json.as_deref() {
+                let mut w = csv_writer(path);
+                serde_json::to_writer_pretty(&mut w, &json_results).unwrap();
+                if path != "-" {
+                    eprintln!("Wrote {} rows to {}", actual_count, path);
                 }
             }
 
@@ -140,6 +249,7 @@ fn main() {
             country,
             list,
             csv,
+            json,
         } => {
             let registry = bank_account::Registry::new();
 
@@ -171,10 +281,13 @@ fn main() {
                 }
             }
 
-            let mut out: Option<Box<dyn Write>> = csv.as_deref().map(csv_writer);
-            if let Some(ref mut w) = out {
+            let mut out_csv: Option<Box<dyn Write>> = csv.as_deref().map(csv_writer);
+            if let Some(ref mut w) = out_csv {
                 writeln!(w, "{}", csv_fmt::ACCOUNT_HEADER).unwrap();
             }
+
+            #[cfg(feature = "json")]
+            let mut json_results = Vec::new();
 
             for _ in 0..count {
                 let result = match &country {
@@ -186,34 +299,54 @@ fn main() {
                     }
                 };
 
-                if let Some(ref mut w) = out {
+                #[cfg(feature = "json")]
+                if json.is_some() {
+                    json_results.push(result.clone());
+                }
+
+                if let Some(ref mut w) = out_csv {
                     writeln!(w, "{}", csv_fmt::account_row(&result)).unwrap();
                 } else {
-                    println!(
-                        "{} - {} - {}:",
-                        result.country_code, result.country_name, result.format_name
-                    );
-                    let mut parts: Vec<String> = Vec::new();
-                    if let Some(ref bank) = result.bank_code {
-                        parts.push(format!("Bank: {}", bank));
+                    let mut print_it = true;
+                    #[cfg(feature = "json")]
+                    if json.is_some() { print_it = false; }
+
+                    if print_it {
+                        println!(
+                            "{} - {} - {}:",
+                            result.country_code, result.country_name, result.format_name
+                        );
+                        let mut parts: Vec<String> = Vec::new();
+                        if let Some(ref bank) = result.bank_code {
+                            parts.push(format!("Bank: {}", bank));
+                        }
+                        if let Some(ref branch) = result.branch_code {
+                            parts.push(format!("Branch: {}", branch));
+                        }
+                        parts.push(format!("Account: {}", result.account_number));
+                        if let Some(ref check) = result.check_digits {
+                            parts.push(format!("Check: {}", check));
+                        }
+                        if let Some(ref iban_code) = result.iban {
+                            parts.push(format!("IBAN: {}", iban::format_iban(iban_code)));
+                        }
+                        parts.push(format!("Formatted: {}", result.formatted));
+                        parts.push(format!("Raw: {}", result.raw));
+                        parts.push(format!(
+                            "valid: {}",
+                            if result.valid { "True" } else { "False" }
+                        ));
+                        println!("  {}", parts.join(" | "));
                     }
-                    if let Some(ref branch) = result.branch_code {
-                        parts.push(format!("Branch: {}", branch));
-                    }
-                    parts.push(format!("Account: {}", result.account_number));
-                    if let Some(ref check) = result.check_digits {
-                        parts.push(format!("Check: {}", check));
-                    }
-                    if let Some(ref iban_code) = result.iban {
-                        parts.push(format!("IBAN: {}", iban::format_iban(iban_code)));
-                    }
-                    parts.push(format!("Formatted: {}", result.formatted));
-                    parts.push(format!("Raw: {}", result.raw));
-                    parts.push(format!(
-                        "valid: {}",
-                        if result.valid { "True" } else { "False" }
-                    ));
-                    println!("  {}", parts.join(" | "));
+                }
+            }
+
+            #[cfg(feature = "json")]
+            if let Some(path) = json.as_deref() {
+                let mut w = csv_writer(path);
+                serde_json::to_writer_pretty(&mut w, &json_results).unwrap();
+                if path != "-" {
+                    eprintln!("Wrote {} rows to {}", count, path);
                 }
             }
 
@@ -230,6 +363,7 @@ fn main() {
             year,
             list,
             csv,
+            json,
         } => {
             let registry = personal_id::Registry::new();
 
@@ -262,31 +396,60 @@ fn main() {
                 year,
             };
 
-            let mut out: Option<Box<dyn Write>> = csv.as_deref().map(csv_writer);
-            if let Some(ref mut w) = out {
+            let mut out_csv: Option<Box<dyn Write>> = csv.as_deref().map(csv_writer);
+            if let Some(ref mut w) = out_csv {
                 writeln!(w, "{}", csv_fmt::ID_HEADER).unwrap();
             } else {
-                println!("{} - {}:", country, name);
+                let mut print_it = true;
+                #[cfg(feature = "json")]
+                if json.is_some() { print_it = false; }
+                if print_it {
+                    println!("{} - {}:", country, name);
+                }
             }
+
+            #[cfg(feature = "json")]
+            let mut json_results = Vec::new();
 
             for _ in 0..count {
                 let code = registry.generate(&country, &opts, &mut rng).unwrap();
                 let parsed = registry.parse(&country, &code).unwrap();
-                if let Some(ref mut w) = out {
+                
+                #[cfg(feature = "json")]
+                if json.is_some() {
+                    json_results.push(parsed.clone());
+                }
+
+                if let Some(ref mut w) = out_csv {
                     writeln!(w, "{}", csv_fmt::id_row(&country, &name, &parsed)).unwrap();
                 } else {
-                    let mut parts = Vec::new();
-                    if let Some(ref g) = parsed.gender {
-                        parts.push(g.clone());
+                    let mut print_it = true;
+                    #[cfg(feature = "json")]
+                    if json.is_some() { print_it = false; }
+
+                    if print_it {
+                        let mut parts = Vec::new();
+                        if let Some(ref g) = parsed.gender {
+                            parts.push(g.clone());
+                        }
+                        if let Some(ref dob) = parsed.dob {
+                            parts.push(dob.clone());
+                        }
+                        parts.push(format!(
+                            "valid: {}",
+                            if parsed.valid { "True" } else { "False" }
+                        ));
+                        println!("  {}  ({})", parsed.code, parts.join(", "));
                     }
-                    if let Some(ref dob) = parsed.dob {
-                        parts.push(dob.clone());
-                    }
-                    parts.push(format!(
-                        "valid: {}",
-                        if parsed.valid { "True" } else { "False" }
-                    ));
-                    println!("  {}  ({})", parsed.code, parts.join(", "));
+                }
+            }
+
+            #[cfg(feature = "json")]
+            if let Some(path) = json.as_deref() {
+                let mut w = csv_writer(path);
+                serde_json::to_writer_pretty(&mut w, &json_results).unwrap();
+                if path != "-" {
+                    eprintln!("Wrote {} rows to {}", count, path);
                 }
             }
 
@@ -294,6 +457,255 @@ fn main() {
                 if path != "-" {
                     eprintln!("Wrote {} rows to {}", count, path);
                 }
+            }
+        }
+        Commands::Card {
+            count,
+            brand,
+            list,
+            csv,
+            json,
+        } => {
+            let registry = credit_card::Registry::new();
+
+            if list {
+                println!("Supported Brands:");
+                for b in registry.list_brands() {
+                    println!("  {}", b);
+                }
+                return;
+            }
+
+            let opts = credit_card::GenOptions {
+                brand: brand.clone(),
+            };
+
+            let mut out_csv: Option<Box<dyn Write>> = csv.as_deref().map(csv_writer);
+            if let Some(ref mut w) = out_csv {
+                writeln!(w, "{}", csv_fmt::CARD_HEADER).unwrap();
+            }
+
+            #[cfg(feature = "json")]
+            let mut json_results = Vec::new();
+
+            for _ in 0..count {
+                let result = match registry.generate(&opts, &mut rng) {
+                    Some(r) => r,
+                    None => {
+                        eprintln!("Unsupported brand: {}", brand.as_deref().unwrap_or(""));
+                        std::process::exit(1);
+                    }
+                };
+
+                #[cfg(feature = "json")]
+                if json.is_some() {
+                    json_results.push(result.clone());
+                }
+
+                if let Some(ref mut w) = out_csv {
+                    writeln!(w, "{}", csv_fmt::card_row(&result)).unwrap();
+                } else {
+                    let mut print_it = true;
+                    #[cfg(feature = "json")]
+                    if json.is_some() { print_it = false; }
+
+                    if print_it {
+                        println!(
+                            "{} ({}): {}  (valid: {})",
+                            result.brand, result.formatted, result.number, result.valid
+                        );
+                    }
+                }
+            }
+
+            #[cfg(feature = "json")]
+            if let Some(path) = json.as_deref() {
+                let mut w = csv_writer(path);
+                serde_json::to_writer_pretty(&mut w, &json_results).unwrap();
+                if path != "-" {
+                    eprintln!("Wrote {} rows to {}", count, path);
+                }
+            }
+
+            if let Some(path) = csv.as_deref() {
+                if path != "-" {
+                    eprintln!("Wrote {} rows to {}", count, path);
+                }
+            }
+        }
+        Commands::Swift {
+            count,
+            country,
+            csv,
+            json,
+        } => {
+            let registry = swift::Registry::new();
+            let opts = swift::GenOptions {
+                country: country.clone(),
+            };
+
+            let mut out_csv: Option<Box<dyn Write>> = csv.as_deref().map(csv_writer);
+            if let Some(ref mut w) = out_csv {
+                writeln!(w, "{}", csv_fmt::SWIFT_HEADER).unwrap();
+            }
+
+            #[cfg(feature = "json")]
+            let mut json_results = Vec::new();
+
+            for _ in 0..count {
+                let result = registry.generate(&opts, &mut rng);
+                
+                #[cfg(feature = "json")]
+                if json.is_some() {
+                    json_results.push(result.clone());
+                }
+
+                if let Some(ref mut w) = out_csv {
+                    writeln!(w, "{}", csv_fmt::swift_row(&result)).unwrap();
+                } else {
+                    let mut print_it = true;
+                    #[cfg(feature = "json")]
+                    if json.is_some() { print_it = false; }
+
+                    if print_it {
+                        println!(
+                            "{} ({}): {}  (valid: {})",
+                            result.bank, result.country, result.code, result.valid
+                        );
+                    }
+                }
+            }
+
+            #[cfg(feature = "json")]
+            if let Some(path) = json.as_deref() {
+                let mut w = csv_writer(path);
+                serde_json::to_writer_pretty(&mut w, &json_results).unwrap();
+                if path != "-" {
+                    eprintln!("Wrote {} rows to {}", count, path);
+                }
+            }
+
+            if let Some(path) = csv.as_deref() {
+                if path != "-" {
+                    eprintln!("Wrote {} rows to {}", count, path);
+                }
+            }
+        }
+        Commands::Company {
+            count,
+            country,
+            list,
+            csv,
+            json,
+        } => {
+            let registry = company_id::Registry::new();
+
+            if list {
+                println!("{:<6} {:<25} {}", "Code", "Country", "ID Name");
+                println!("{}", "-".repeat(50));
+                for (code, country_name, name) in registry.list_countries() {
+                    println!("{:<6} {:<25} {}", code, country_name, name);
+                }
+                return;
+            }
+
+            let opts = company_id::GenOptions {
+                country: country.clone(),
+            };
+
+            let mut out_csv: Option<Box<dyn Write>> = csv.as_deref().map(csv_writer);
+            if let Some(ref mut w) = out_csv {
+                writeln!(w, "{}", csv_fmt::COMPANY_HEADER).unwrap();
+            }
+
+            #[cfg(feature = "json")]
+            let mut json_results = Vec::new();
+
+            for _ in 0..count {
+                let result = match registry.generate(&opts, &mut rng) {
+                    Some(r) => r,
+                    None => {
+                        eprintln!("Unsupported country: {}", country.as_deref().unwrap_or(""));
+                        std::process::exit(1);
+                    }
+                };
+
+                #[cfg(feature = "json")]
+                if json.is_some() {
+                    json_results.push(result.clone());
+                }
+
+                if let Some(ref mut w) = out_csv {
+                    writeln!(w, "{}", csv_fmt::company_row(&result)).unwrap();
+                } else {
+                    let mut print_it = true;
+                    #[cfg(feature = "json")]
+                    if json.is_some() { print_it = false; }
+
+                    if print_it {
+                        println!(
+                            "{} - {} - {}: {}  (valid: {})",
+                            result.country_code, result.country_name, result.name, result.code, result.valid
+                        );
+                    }
+                }
+            }
+
+            #[cfg(feature = "json")]
+            if let Some(path) = json.as_deref() {
+                let mut w = csv_writer(path);
+                serde_json::to_writer_pretty(&mut w, &json_results).unwrap();
+                if path != "-" {
+                    eprintln!("Wrote {} rows to {}", count, path);
+                }
+            }
+
+            if let Some(path) = csv.as_deref() {
+                if path != "-" {
+                    eprintln!("Wrote {} rows to {}", count, path);
+                }
+            }
+        }
+        Commands::Validate { category, code, country } => {
+            let cat = category.to_lowercase();
+            let country = country.map(|c| c.to_uppercase());
+            
+            let valid = match cat.as_str() {
+                "iban" => iban::validate_iban(&code),
+                "account" => {
+                    let cc = country.unwrap_or_else(|| {
+                        eprintln!("Error: --country is required for account validation");
+                        std::process::exit(1);
+                    });
+                    bank_account::Registry::new().validate(&cc, &code).unwrap_or(false)
+                },
+                "id" => {
+                    let cc = country.unwrap_or_else(|| {
+                        eprintln!("Error: --country is required for personal ID validation");
+                        std::process::exit(1);
+                    });
+                    personal_id::Registry::new().validate(&cc, &code).unwrap_or(false)
+                },
+                "card" => credit_card::Registry::new().validate(&code),
+                "swift" => swift::Registry::new().validate(&code),
+                "company" => {
+                    let cc = country.unwrap_or_else(|| {
+                        eprintln!("Error: --country is required for company ID validation");
+                        std::process::exit(1);
+                    });
+                    company_id::Registry::new().validate(&cc, &code)
+                },
+                _ => {
+                    eprintln!("Unknown category: {}. Use iban, account, id, card, swift, or company.", cat);
+                    std::process::exit(1);
+                }
+            };
+
+            if valid {
+                println!("TRUE: {} is a valid {} code", code, cat);
+            } else {
+                println!("FALSE: {} is NOT a valid {} code", code, cat);
+                std::process::exit(1);
             }
         }
     }

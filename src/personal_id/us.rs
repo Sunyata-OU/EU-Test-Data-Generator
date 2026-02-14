@@ -27,7 +27,7 @@ pub fn validate(code: &str) -> bool {
 
 pub fn parse(code: &str) -> IdResult {
     let clean: String = code.chars().filter(|c| *c != '-').collect();
-    IdResult {
+    IdResult { country_code: "".to_string(),
         code: if clean.len() == 9 {
             format!("{}-{}-{}", &clean[0..3], &clean[3..5], &clean[5..9])
         } else {

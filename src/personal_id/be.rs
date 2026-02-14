@@ -50,7 +50,7 @@ pub fn parse(code: &str) -> IdResult {
     } else {
         2000 + yy
     };
-    IdResult {
+    IdResult { country_code: "".to_string(),
         code: format!(
             "{}.{}.{}-{}.{}",
             &clean[0..2],

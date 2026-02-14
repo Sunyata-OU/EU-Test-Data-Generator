@@ -58,7 +58,7 @@ pub fn parse(code: &str) -> IdResult {
         (None, None)
     };
 
-    IdResult {
+    IdResult { country_code: "".to_string(),
         code: if clean.len() == 12 {
             format!("{}-{}-{}", &clean[0..6], &clean[6..8], &clean[8..12])
         } else {

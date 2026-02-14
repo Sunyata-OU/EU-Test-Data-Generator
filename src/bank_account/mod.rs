@@ -2,6 +2,9 @@ pub mod checksum;
 pub mod generic;
 pub mod iban_based;
 
+#[cfg(feature = "json")]
+use serde::Serialize;
+
 pub mod ar;
 pub mod au;
 pub mod br;
@@ -27,6 +30,7 @@ pub struct GenOptions {
 
 /// Result of generating or validating a bank account number.
 #[derive(Debug, Clone)]
+#[cfg_attr(feature = "json", derive(Serialize))]
 pub struct AccountResult {
     pub country_code: String,
     pub country_name: String,

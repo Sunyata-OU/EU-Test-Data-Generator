@@ -55,7 +55,7 @@ pub fn parse(code: &str) -> IdResult {
         8 => 1800,
         _ => 1900,
     };
-    IdResult {
+    IdResult { country_code: "".to_string(),
         code: clean.to_string(),
         gender: None,
         dob: Some(format!("{}-{:02}-{:02}", century + yy, mm, dd)),

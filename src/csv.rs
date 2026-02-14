@@ -8,7 +8,10 @@
 use std::io::Write;
 
 use crate::bank_account::AccountResult;
+use crate::company_id::CompanyResult;
+use crate::credit_card::CardResult;
 use crate::personal_id::IdResult;
+use crate::swift::SwiftResult;
 
 /// Wrap a CSV field in double quotes if it contains commas, double-quotes, or
 /// newlines, per RFC 4180. Internal double-quotes are escaped by doubling.
@@ -25,6 +28,15 @@ pub const IBAN_HEADER: &str = "country,iban,iban_formatted,valid";
 
 /// CSV header for personal ID rows.
 pub const ID_HEADER: &str = "country,id_name,code,gender,dob,valid";
+
+/// CSV header for credit card rows.
+pub const CARD_HEADER: &str = "brand,number,formatted,valid";
+
+/// CSV header for SWIFT rows.
+pub const SWIFT_HEADER: &str = "country,bank,location,branch,code,valid";
+
+/// CSV header for company ID rows.
+pub const COMPANY_HEADER: &str = "country,id_name,code,valid";
 
 /// Format a single IBAN as a CSV row.
 pub fn iban_row(iban_code: &str, formatted: &str, valid: bool) -> String {
@@ -46,6 +58,41 @@ pub fn id_row(country: &str, id_name: &str, result: &IdResult) -> String {
         csv_field(&result.code),
         csv_field(result.gender.as_deref().unwrap_or("")),
         csv_field(result.dob.as_deref().unwrap_or("")),
+        result.valid
+    )
+}
+
+/// Format a single credit card result as a CSV row.
+pub fn card_row(result: &CardResult) -> String {
+    format!(
+        "{},{},{},{}",
+        csv_field(&result.brand),
+        csv_field(&result.number),
+        csv_field(&result.formatted),
+        result.valid
+    )
+}
+
+/// Format a single SWIFT result as a CSV row.
+pub fn swift_row(result: &SwiftResult) -> String {
+    format!(
+        "{},{},{},{},{},{}",
+        csv_field(&result.country),
+        csv_field(&result.bank),
+        csv_field(&result.location),
+        csv_field(result.branch.as_deref().unwrap_or("")),
+        csv_field(&result.code),
+        result.valid
+    )
+}
+
+/// Format a single company ID result as a CSV row.
+pub fn company_row(result: &CompanyResult) -> String {
+    format!(
+        "{},{},{},{}",
+        csv_field(&result.country_code),
+        csv_field(&result.name),
+        csv_field(&result.code),
         result.valid
     )
 }

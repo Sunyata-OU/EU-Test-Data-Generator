@@ -62,7 +62,7 @@ pub fn parse(code: &str) -> IdResult {
             }
         }
     };
-    IdResult {
+    IdResult { country_code: "".to_string(),
         code: format!("{}-{}", &clean[..6], &clean[6..]),
         gender: Some(if seq % 2 == 1 { "male" } else { "female" }.to_string()),
         dob: Some(format!("{}-{:02}-{:02}", century + yy, mm, dd)),

@@ -128,7 +128,7 @@ pub fn parse(code: &str) -> IdResult {
     let actual_dd = if dd > 40 { dd - 40 } else { dd };
     let century: u16 = if yy <= 25 { 2000 } else { 1900 };
     let dob = month.map(|mm| format!("{}-{:02}-{:02}", century + yy, mm, actual_dd));
-    IdResult {
+    IdResult { country_code: "".to_string(),
         code: upper,
         gender: Some(gender_str.to_string()),
         dob,

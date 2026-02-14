@@ -229,7 +229,7 @@ pub fn parse(code: &str, id: &str) -> Option<super::IdResult> {
     let valid = validate(code, id).unwrap_or(false);
     let info = find_info(code)?;
     let _ = info; // just to confirm it exists
-    Some(super::IdResult {
+    Some(super::IdResult { country_code: "".to_string(),
         code: id.to_string(),
         gender: None,
         dob: None,

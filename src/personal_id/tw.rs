@@ -80,7 +80,7 @@ pub fn parse(code: &str) -> IdResult {
     } else {
         None
     };
-    IdResult {
+    IdResult { country_code: "".to_string(),
         code: code.to_string(),
         gender,
         dob: None,

@@ -133,7 +133,7 @@ pub fn parse(code: &str) -> IdResult {
         (None, None)
     };
 
-    IdResult {
+    IdResult { country_code: "".to_string(),
         code: upper,
         gender,
         dob,

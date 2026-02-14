@@ -69,7 +69,7 @@ pub fn parse(code: &str) -> IdResult {
     } else {
         (1900 + yy, mm)
     };
-    IdResult {
+    IdResult { country_code: "".to_string(),
         code: code.to_string(),
         gender: Some(
             if (code.as_bytes()[9] - b'0') % 2 == 1 {

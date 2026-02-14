@@ -62,7 +62,7 @@ pub fn parse(code: &str) -> IdResult {
     let yy: u16 = code[4..6].parse().unwrap_or(0);
     let ind: u16 = code[6..9].parse().unwrap_or(0);
     let century: u16 = if ind >= 500 { 2000 } else { 1900 };
-    IdResult {
+    IdResult { country_code: "".to_string(),
         code: code.to_string(),
         gender: Some(if ind % 2 == 1 { "male" } else { "female" }.to_string()),
         dob: Some(format!("{}-{:02}-{:02}", century + yy, mm, dd)),

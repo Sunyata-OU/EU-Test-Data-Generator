@@ -39,7 +39,7 @@ pub fn parse(code: &str) -> IdResult {
     let gender_str = if mm > 50 { "female" } else { "male" };
     let actual_mm = if mm > 50 { mm - 50 } else { mm };
     let century: u16 = if yy <= 25 { 2000 } else { 1900 };
-    IdResult {
+    IdResult { country_code: "".to_string(),
         code: format!("{}/{}", &clean[..6], &clean[6..]),
         gender: Some(gender_str.to_string()),
         dob: Some(format!("{}-{:02}-{:02}", century + yy, actual_mm, dd)),
