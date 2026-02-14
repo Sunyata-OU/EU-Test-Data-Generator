@@ -7,7 +7,7 @@ use idsmith::{bank_account, company_id, credit_card, csv as csv_fmt, iban, perso
 
 #[derive(Parser)]
 #[command(name = "idsmith")]
-#[command(about = "Forge valid test IBANs, personal IDs, and bank accounts for 252 countries")]
+#[command(about = "Validate and generate checksum-correct IBANs, personal IDs, bank accounts, and more for 252 countries")]
 struct Cli {
     #[command(subcommand)]
     command: Commands,

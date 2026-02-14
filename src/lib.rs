@@ -1,7 +1,7 @@
 //! # idsmith
 //!
-//! Forge valid, checksum-correct IBANs, personal IDs, and bank accounts
-//! for 252 countries. Every generated code passes mod-97 (IBAN) and
+//! Validate and generate checksum-correct IBANs, personal IDs, and bank accounts
+//! for 252 countries. Every identifier passes mod-97 (IBAN) and
 //! national checksum validation.
 //!
 //! ## Quick Start

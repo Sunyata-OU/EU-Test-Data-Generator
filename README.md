@@ -1,12 +1,12 @@
 # idsmith
 
-Forge and validate checksum-correct **IBANs**, **personal IDs**, **bank accounts**, **credit cards**, **SWIFT/BIC**, and **company IDs** for 252 countries.
+Validate and generate checksum-correct **IBANs**, **personal IDs**, **bank accounts**, **credit cards**, **SWIFT/BIC**, and **company IDs** for 252 countries.
 
-Built for QA engineers and developers who need realistic, algorithmically valid test data or a robust way to validate existing identifiers.
+Built for developers and QA engineers who need a robust way to validate existing identifiers or create realistic, algorithmically valid test data.
 
 ## Features
 
-- **Generator + Validator** — use it to create new data or verify existing strings
+- **Validator + Generator** — verify existing strings or create new data
 - **96 IBAN countries** — full IBAN registry coverage with mod-97-10 checksum validation
 - **252 bank account formats** — US ABA routing, MX CLABE, AU BSB, IN IFSC, AR CBU, NG NUBAN, BR mod-11, etc.
 - **252 personal ID formats** — 56 checksum-verified (SSN, CPF, Aadhaar, Resident ID) + generic fallbacks
@@ -25,21 +25,7 @@ cargo install --path .
 
 ## CLI Usage
 
-### 1. Generating Data
-Generate any identifier using subcommands. Use the optional count positional argument.
-
-```bash
-# Generate 5 German IBANs
-idsmith iban DE 5
-
-# Generate 3 US Bank Accounts in JSON
-idsmith account 3 --country US --json -
-
-# Generate a random Credit Card
-idsmith card --brand amex
-```
-
-### 2. Validating Data
+### 1. Validating Data
 Use the `validate` command to check if a code is checksum and format correct.
 
 ```bash
@@ -51,6 +37,20 @@ idsmith validate id 446-72-2445 --country US
 
 # Validate a Credit Card
 idsmith validate card 5590133141634919
+```
+
+### 2. Generating Data
+Generate any identifier using subcommands. Use the optional count positional argument.
+
+```bash
+# Generate 5 German IBANs
+idsmith iban DE 5
+
+# Generate 3 US Bank Accounts in JSON
+idsmith account 3 --country US --json -
+
+# Generate a random Credit Card
+idsmith card --brand amex
 ```
 
 ## Library (SDK) Usage
