@@ -72,6 +72,9 @@ jobs:
         with:
           node-version: '22'
 
+      - name: Upgrade npm for trusted publishing
+        run: npm install -g npm@latest
+
       - uses: actions/download-artifact@v4
         with:
           pattern: bindings-*
@@ -85,3 +88,5 @@ jobs:
       - name: Publish
         working-directory: bindings/node
         run: npm publish --provenance --access public
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
