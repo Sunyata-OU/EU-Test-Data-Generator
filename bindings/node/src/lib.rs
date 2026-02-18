@@ -300,7 +300,7 @@ impl CreditCard {
     #[napi]
     pub fn generate(brand: Option<String>) -> Result<CardResult> {
         let mut rng = thread_rng();
-        let opts = idsmith::credit_card::GenOptions { brand };
+        let opts = idsmith::credit_card::GenOptions { brand, current_year: None };
         idsmith::credit_cards()
             .generate(&opts, &mut rng)
             .map(CardResult::from)

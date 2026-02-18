@@ -248,7 +248,7 @@ impl CreditCard {
     #[pyo3(signature = (brand=None))]
     fn generate(py: Python<'_>, brand: Option<String>) -> PyResult<PyObject> {
         let mut rng = thread_rng();
-        let opts = idsmith::credit_card::GenOptions { brand };
+        let opts = idsmith::credit_card::GenOptions { brand, current_year: None };
         idsmith::credit_cards()
             .generate(&opts, &mut rng)
             .map(|r| card_result_to_dict(py, &r))
